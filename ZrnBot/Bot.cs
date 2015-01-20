@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace ZrnBot
 {
@@ -38,11 +41,7 @@ namespace ZrnBot
             channels = chanList;
         }
 
-        /// <summary>
-        /// Configures a new Bot object
-        /// </summary>
-        /// <returns></returns>
-        public static Bot SetupBot()
+        private static Bot SetupBot()
         {
             var botName = InputUtils.GetName();
             var password = InputUtils.GetPassword();
@@ -54,6 +53,33 @@ namespace ZrnBot
 
             var bot = new Bot(botName, password, server, port, user, control, "", channels);
             return bot;
+        }
+
+        /// <summary>
+        /// Serialises the bot to a file to be loaded later
+        /// </summary>
+        public void SaveBot()
+        {
+            var binFormatter = new BinaryFormatter();
+            var outFile = new FileStream(AppData.ConfigFileName, FileMode.Create, FileAccess.Write);
+            binFormatter.Serialize(outFile, this);
+        }
+
+        /// <summary>
+        /// Loads a bot from a config file if one exists, else calls the SetupBot() method
+        /// </summary>
+        /// <returns></returns>
+        public static Bot LoadBot()
+        {
+            if (File.Exists(AppData.ConfigFileName))
+            {
+                var binFormatter = new BinaryFormatter();
+                var inFile = new FileStream(AppData.ConfigFileName, FileMode.Open, FileAccess.Read);
+                var bot = (Bot) binFormatter.Deserialize(inFile);
+                return bot;
+            }
+
+            return SetupBot();
         }
     }
 }
