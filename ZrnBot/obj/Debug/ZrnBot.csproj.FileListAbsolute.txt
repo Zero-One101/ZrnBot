@@ -1,0 +1,6 @@
+F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.exe.config
+F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.exe
+F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.pdb
+F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.csprojResolveAssemblyReference.cache
+F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.exe
+F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.pdb
