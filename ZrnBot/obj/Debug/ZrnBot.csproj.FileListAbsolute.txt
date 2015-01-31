@@ -4,3 +4,9 @@ F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.pdb
 F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.csprojResolveAssemblyReference.cache
 F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.exe
 F:\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.pdb
+C:\Users\Stephen\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.exe.config
+C:\Users\Stephen\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.exe
+C:\Users\Stephen\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.pdb
+C:\Users\Stephen\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.exe
+C:\Users\Stephen\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\bin\Debug\ZrnBot.pdb
+C:\Users\Stephen\Dropbox\Public\C# Programs\ZrnBot\ZrnBot\obj\Debug\ZrnBot.csprojResolveAssemblyReference.cache

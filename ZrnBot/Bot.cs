@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
@@ -63,6 +59,7 @@ namespace ZrnBot
             var binFormatter = new BinaryFormatter();
             var outFile = new FileStream(AppData.ConfigFileName, FileMode.Create, FileAccess.Write);
             binFormatter.Serialize(outFile, this);
+            outFile.Close();
         }
 
         /// <summary>
@@ -71,15 +68,22 @@ namespace ZrnBot
         /// <returns></returns>
         public static Bot LoadBot()
         {
-            if (File.Exists(AppData.ConfigFileName))
-            {
-                var binFormatter = new BinaryFormatter();
-                var inFile = new FileStream(AppData.ConfigFileName, FileMode.Open, FileAccess.Read);
-                var bot = (Bot) binFormatter.Deserialize(inFile);
-                return bot;
-            }
+            if (!File.Exists(AppData.ConfigFileName)) return SetupBot();
+            var binFormatter = new BinaryFormatter();
+            var inFile = new FileStream(AppData.ConfigFileName, FileMode.Open, FileAccess.Read);
+            var bot = (Bot) binFormatter.Deserialize(inFile);
+            inFile.Close();
+            return bot;
+        }
 
-            return SetupBot();
+        public void DisplayConfig()
+        {
+            Console.WriteLine(BotName);
+            Console.WriteLine(Password);
+            Console.WriteLine(Server);
+            Console.WriteLine(Port);
+            Console.WriteLine(User);
+            Console.WriteLine(Control);
         }
     }
 }

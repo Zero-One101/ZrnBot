@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZrnBot
 {
     class ConsoleUI
     {
+        public void Run()
+        {
+            var bot = Bot.LoadBot();
+            bot.SaveBot();
+            //bot.DisplayConfig();
+        }
+
         /// <summary>
         /// Gets input from the user
         /// </summary>
@@ -17,7 +20,7 @@ namespace ZrnBot
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("{0}: ", data);
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.White;
             return Console.ReadLine();
         }
 
@@ -39,6 +42,7 @@ namespace ZrnBot
         {
             Console.Write("Press any key to continue...");
             Console.ReadKey();
+            Console.WriteLine();
         }
     }
 }

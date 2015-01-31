@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ZrnBot
@@ -50,7 +48,7 @@ namespace ZrnBot
 
         private static bool IsValidNick(string nick)
         {
-            var r = new Regex("[^a-zA-Z0-9_\\]\\[-{}^`|\\\\]");
+            var r = new Regex(AppData.ValidCharacters);
             return (!r.IsMatch(nick) && !Char.IsDigit(nick, 0));
         }
 
@@ -85,7 +83,7 @@ namespace ZrnBot
         /// <returns>A string containing the server</returns>
         public static string GetServer()
         {
-            var server = ConsoleUI.GetInput("Server (e.g. irc.esper.net");
+            var server = ConsoleUI.GetInput("Server (e.g. irc.esper.net)");
             return server;
         }
 

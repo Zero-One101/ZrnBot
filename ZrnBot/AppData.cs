@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZrnBot
+﻿namespace ZrnBot
 {
     static class AppData
     {
         public const string ConfigFileName = "ZrnBot.cfg";
+        public const string ValidCharacters = "[^a-zA-Z0-9_\\]\\[-{}^`|\\\\]";
     }
 }

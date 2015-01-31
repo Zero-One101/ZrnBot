@@ -1,0 +1,6 @@
+﻿namespace ZrnBot
+{
+    interface IPyScript
+    {
+    }
+}

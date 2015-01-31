@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZrnBot
 {
@@ -26,10 +23,10 @@ namespace ZrnBot
         /// Converts a string into a series of Channel objects
         /// </summary>
         /// <param name="channels"></param>
-        /// <returns>An IReadOnlyList of Channel objects</returns>
+        /// <returns>A List of Channel objects</returns>
         public static List<Channel> ToChannelList(string channels)
         {
-            List<Channel> chanList = new List<Channel>();
+            var chanList = new List<Channel>();
             var chansplit = channels.Split(',');
 
             foreach (var split in chansplit.Select(channel => channel.Split(' ')))
