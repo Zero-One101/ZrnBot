@@ -43,9 +43,9 @@
   <ItemGroup>
     <Compile Include="AppData.cs" />
     <Compile Include="Bot.cs" />
+    <Compile Include="BotSerialiser.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="ConsoleUI.cs" />
-    <Compile Include="InputUtils.cs" />
     <Compile Include="IO\INetwork.cs" />
     <Compile Include="IO\IrcMessage.cs" />
     <Compile Include="IO\IrcNetwork.cs" />
@@ -54,6 +54,7 @@
     <Compile Include="Message.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
     <Compile Include="Test\IO\MockNetwork.cs" />
   </ItemGroup>
   <ItemGroup>

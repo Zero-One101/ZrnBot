@@ -1,17 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ZrnBot
 {
-    static class InputUtils
+    class Startup
     {
-        /// <summary>
-        /// Asks the User to input a name and then checks for illegal characters
-        /// </summary>
-        /// <returns>A string containing the bot name</returns>
-        public static string GetName()
+        public Startup()
+        {
+            var botSerialiser = new BotSerialiser();
+            Bot bot;
+            try
+            {
+                bot = botSerialiser.LoadBot();
+            }
+            catch (FileNotFoundException)
+            {
+                var botName = GetName();
+                var password = GetPassword();
+                var server = GetServer();
+                var port = GetPort();
+                var channels = GetChannels();
+                var user = GetUser();
+                var control = GetControlChar();
+
+                bot = new Bot(botName, password, server, port, user, control, "", channels);
+            }
+        }
+        
+        private string GetName()
         {
             while (true)
             {
@@ -28,7 +49,7 @@ namespace ZrnBot
             }
         }
 
-        public static string GetUser()
+        private string GetUser()
         {
             while (true)
             {
@@ -43,7 +64,7 @@ namespace ZrnBot
                 ConsoleUI.DisplayErrorMessage("Characters 0-9 and '-' may not be in the first position.");
                 ConsoleUI.DisplayKeyPrompt();
             }
-            
+
         }
 
         private static bool IsValidNick(string nick)
@@ -52,11 +73,7 @@ namespace ZrnBot
             return (!r.IsMatch(nick) && !Char.IsDigit(nick, 0));
         }
 
-        /// <summary>
-        /// Asks the User to input a password
-        /// </summary>
-        /// <returns>A string containing the bot password</returns>
-        public static string GetPassword()
+        private string GetPassword()
         {
             while (true)
             {
@@ -77,21 +94,13 @@ namespace ZrnBot
             return (!pass.Contains(' '));
         }
 
-        /// <summary>
-        /// Asks the User to input a server
-        /// </summary>
-        /// <returns>A string containing the server</returns>
-        public static string GetServer()
+        private string GetServer()
         {
             var server = ConsoleUI.GetInput("Server (e.g. irc.esper.net)");
             return server;
         }
 
-        /// <summary>
-        /// Asks the User to input a port
-        /// </summary>
-        /// <returns>An int containing the port</returns>
-        public static int GetPort()
+        private int GetPort()
         {
             while (true)
             {
@@ -120,11 +129,7 @@ namespace ZrnBot
             return false;
         }
 
-        /// <summary>
-        /// Asks the User to input a list of comma separated channels, with or without passwords
-        /// </summary>
-        /// <returns>A list of Channel objects</returns>
-        public static List<Channel> GetChannels()
+        private List<Channel> GetChannels()
         {
             while (true)
             {

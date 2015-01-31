@@ -4,8 +4,7 @@
     {
         static void Main(string[] args)
         {
-            var ui = new ConsoleUI();
-            ui.Run();
+            var startup = new Startup();
         }
     }
 }

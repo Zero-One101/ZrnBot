@@ -4,13 +4,6 @@ namespace ZrnBot
 {
     class ConsoleUI
     {
-        public void Run()
-        {
-            var bot = Bot.LoadBot();
-            bot.SaveBot();
-            //bot.DisplayConfig();
-        }
-
         /// <summary>
         /// Gets input from the user
         /// </summary>

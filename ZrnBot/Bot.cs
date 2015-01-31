@@ -37,45 +37,6 @@ namespace ZrnBot
             channels = chanList;
         }
 
-        private static Bot SetupBot()
-        {
-            var botName = InputUtils.GetName();
-            var password = InputUtils.GetPassword();
-            var server = InputUtils.GetServer();
-            var port = InputUtils.GetPort();
-            var channels = InputUtils.GetChannels();
-            var user = InputUtils.GetUser();
-            var control = InputUtils.GetControlChar();
-
-            var bot = new Bot(botName, password, server, port, user, control, "", channels);
-            return bot;
-        }
-
-        /// <summary>
-        /// Serialises the bot to a file to be loaded later
-        /// </summary>
-        public void SaveBot()
-        {
-            var binFormatter = new BinaryFormatter();
-            var outFile = new FileStream(AppData.ConfigFileName, FileMode.Create, FileAccess.Write);
-            binFormatter.Serialize(outFile, this);
-            outFile.Close();
-        }
-
-        /// <summary>
-        /// Loads a bot from a config file if one exists, else calls the SetupBot() method
-        /// </summary>
-        /// <returns></returns>
-        public static Bot LoadBot()
-        {
-            if (!File.Exists(AppData.ConfigFileName)) return SetupBot();
-            var binFormatter = new BinaryFormatter();
-            var inFile = new FileStream(AppData.ConfigFileName, FileMode.Open, FileAccess.Read);
-            var bot = (Bot) binFormatter.Deserialize(inFile);
-            inFile.Close();
-            return bot;
-        }
-
         public void DisplayConfig()
         {
             Console.WriteLine(BotName);
