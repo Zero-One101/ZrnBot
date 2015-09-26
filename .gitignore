@@ -41,3 +41,7 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Untracked Directories:
+/Test/*
+/packages/Moq.4.2.1502.0911/

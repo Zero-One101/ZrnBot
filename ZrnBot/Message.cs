@@ -1,6 +1,9 @@
 ﻿namespace ZrnBot
 {
-    public class Message
+    /// <summary>
+    /// A message received from the IRC network
+    /// </summary>
+    public class Message : IMessage
     {
         public string Nick { get; private set; }
         public string Hostmask { get; private set; }

@@ -46,6 +46,8 @@
     <Compile Include="BotSerialiser.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="ConsoleUI.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="IO\IIrcMessage.cs" />
     <Compile Include="IO\INetwork.cs" />
     <Compile Include="IO\IrcMessage.cs" />
     <Compile Include="IO\IrcNetwork.cs" />

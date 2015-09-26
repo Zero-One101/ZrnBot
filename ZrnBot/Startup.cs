@@ -17,6 +17,7 @@ namespace ZrnBot
             try
             {
                 bot = botSerialiser.LoadBot();
+                Console.WriteLine("Bot loaded successfully.");
             }
             catch (FileNotFoundException)
             {
@@ -29,6 +30,15 @@ namespace ZrnBot
                 var control = GetControlChar();
 
                 bot = new Bot(botName, password, server, port, user, control, "", channels);
+
+                if (botSerialiser.SaveBot(bot))
+                {
+                    Console.WriteLine("Bot saved successfully.");
+                }
+                else
+                {
+                    ConsoleUI.DisplayErrorMessage("Unable to save bot config!");
+                }
             }
         }
         
@@ -150,7 +160,7 @@ namespace ZrnBot
             return !channels.Any(channel => channel[0] != '#' && channel[0] != '&');
         }
 
-        public static char GetControlChar()
+        private static char GetControlChar()
         {
             while (true)
             {
