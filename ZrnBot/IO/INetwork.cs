@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZrnBot.IO
+﻿namespace ZrnBot.IO
 {
+    /// <summary>
+    /// Provides a method of notifying on incoming data, and a method of sending data
+    /// </summary>
     interface INetwork
     {
+        event MessageReceivedHandler MessageReceived;
 
+        void FireMessageReceived(IIrcMessage message);
     }
 }

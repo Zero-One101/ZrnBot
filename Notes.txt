@@ -1,831 +1,793 @@
-Jan 30 19:58:50 <ZeroOne>	Well, time to create the Message object
-Jan 30 19:59:07 *	SkreeBot (~SkreeBot@24-179-35-212.dhcp.leds.al.charter.com) has joined #sr388
-Jan 30 19:59:08 <SkreeBot>	Command token for this channel is &
-Jan 30 19:59:08 *	ChanServ sets modes [#sr388 +o SkreeBot]
-Jan 30 19:59:22 *	SkreeBot has quit (Read error: Connection reset by peer)
-Jan 30 19:59:51 <PY>	you should probably just create whatever channel when you get a message from it
-Jan 30 20:00:02 <Silver_Skree>	I do
-Jan 30 20:00:02 <ZeroOne>	I wonder if I should have message subtypes to identify if it's a server message or not
-Jan 30 20:00:23 <Silver_Skree>	I recently rewrote the section that happens in
-Jan 30 20:00:31 <Silver_Skree>	and forgot to add LBYL
-Jan 30 20:01:25 <PY>	LBYL?
-Jan 30 20:01:33 <Silver_Skree>	Look Before You Leap
-Jan 30 20:01:48 <Silver_Skree>	check if my channel dict has an entry for this channel
-Jan 30 20:01:50 <Silver_Skree>	if not, make one
-Jan 30 20:01:54 <Silver_Skree>	THEN access the dict
-Jan 30 20:02:05 <Silver_Skree>	as opposed to EAFTP
-Jan 30 20:02:19 <Silver_Skree>	Easier to Ask Forgiveness Than Permission
-Jan 30 20:02:22 <Silver_Skree>	try access
-Jan 30 20:02:48 <Silver_Skree>	on KeyError, make entry
-Jan 30 20:02:48 <PY>	yes, I'm aware of the terms :v
-Jan 30 20:03:07 <Silver_Skree>	yeah, I think you taught them to me
-Jan 30 20:03:14 <Silver_Skree>	was wondering why you asked
-Jan 30 20:03:39 <PY>	didn't immediately grok the acronym
-Jan 30 20:04:02 <ZeroOne>	I love how I can never remember how to write enums
-Jan 30 20:04:52 <Silver_Skree>	why is the chanObj for the query None
-Jan 30 20:04:58 <Silver_Skree>	what the fuck
-Jan 30 20:04:59 <Silver_Skree>	oh wait
-Jan 30 20:05:01 <Silver_Skree>	no I know
-Jan 30 20:06:24 <Silver_Skree>	I'm relating the line to its channel object inside of the network object
-Jan 30 20:06:55 <Silver_Skree>	but when a line's channel string isn't in the network object's channel dictionary keys, I disregard it
-Jan 30 20:06:58 <Silver_Skree>	I'm not sure why
-Jan 30 20:08:17 <ZeroOne>	I love me some ReSharper.
-Jan 30 20:09:43 <Silver_Skree>	the big advantage ZeroOne has over me is the ability to set up a real debug environment and step through operations and view memory >_>
-Jan 30 20:09:53 *	Silver_Skree misses these things
-Jan 30 20:10:01 <ZeroOne>	Yeah, and I don't even have to connect to IRC to test things.
-Jan 30 20:10:31 <PY>	you could use a python debugger, skree <.<
-Jan 30 20:10:34 <Silver_Skree>	you've already got your mock network set up?
-Jan 30 20:10:37 <ZeroOne>	Not yet
-Jan 30 20:10:44 <ZeroOne>	I'm currently writing the Message object
-Jan 30 20:11:22 <Silver_Skree>	of course, my advantage is my abundance of free time 
-Jan 30 20:11:39 <ZeroOne>	I don't have to do shit until next Friday :P
-Jan 30 20:11:48 <Silver_Skree>	BOT RAAAAAAAACE
-Jan 30 20:11:50 <ZeroOne>	Your advantage is you actually work on it.
-Jan 30 20:12:09 <Silver_Skree>	I started two days ago
-Jan 30 20:12:21 <Silver_Skree>	don't count me in for the long run yet
-Jan 30 20:12:26 <ZeroOne>	Heh
-Jan 30 20:12:52 <ZeroOne>	You also have the benefit of knowing Python better than I do
-Jan 30 20:12:56 <Silver_Skree>	but still, only two days and I'm this far along
-Jan 30 20:13:03 <ZeroOne>	My core is C#, but most of my functionality will end up being Python scripts
-Jan 30 20:13:29 <Silver_Skree>	despite some of the less tasteful practices, this is the most productive I've been with code since I wrote my dumb little slideshow program
-Jan 30 20:13:40 <ZeroOne>	Whoa. Last time I worked on ZrnBot was 10 days ago
-Jan 30 20:13:41 <Silver_Skree>	even Simplex wasn't cranked out this fast at first
-Jan 30 20:14:24 <ZeroOne>	And that was just adding save/load functionality
-Jan 30 20:14:36 <Silver_Skree>	I still need to add that
-Jan 30 20:14:42 <Silver_Skree>	I'm not logging and there's no config
-Jan 30 20:14:51 <Silver_Skree>	but right now I'm sidetracked on not making him crash on CTCP
-Jan 30 20:14:52 <ZeroOne>	[Serializable] make it really trivial in C#
-Jan 30 20:15:10 <ZeroOne>	makes*
-Jan 30 20:15:16 <Silver_Skree>	presumably he would have also crashed on query
-Jan 30 20:15:23 <Silver_Skree>	just, nobody queried him
-Jan 30 20:15:36 <Silver_Skree>	also, I want to try something
-Jan 30 20:15:55 *	Silver_Skree test
-Jan 30 20:15:59 <ZeroOne>	Ok, time to parse the incoming message and split it up into all of its components
-Jan 30 20:16:00 <Silver_Skree>	aw
-Jan 30 20:16:40 <Silver_Skree>	gotta love that non-linear development
-Jan 30 20:17:03 <ZeroOne>	Jumping around the various tasks you need to do and hope it all comes together?
-Jan 30 20:17:21 <Silver_Skree>	hehe
-Jan 30 20:17:24 <ZeroOne>	I should've actually made a diagram of this. Some sort of documentation.
-Jan 30 20:17:58 <Silver_Skree>	what I meant is that I just hurried into connecting to IRC, responding to pings, and joining channels
-Jan 30 20:18:05 <Silver_Skree>	and then polished from there
-Jan 30 20:18:12 <ZeroOne>	Ah
-Jan 30 20:18:17 <ZeroOne>	Yep, that was my first bot.
-Jan 30 20:18:23 <Silver_Skree>	you seem to have handled saving, loading, etc. first
-Jan 30 20:18:34 <ZeroOne>	My first bot was also made in entirely two classes.
-Jan 30 20:18:40 <Silver_Skree>	heh
-Jan 30 20:19:02 <ZeroOne>	I think the save thing was just me being lazy. Doing that means I don't have to input all of the same connection details every time, or hardcode it.
-Jan 30 20:19:18 <ZeroOne>	Instead, "oh look, it's a file. Let's cast it to a Bot object."
-Jan 30 20:19:20 <ZeroOne>	boom, done
-Jan 30 20:20:14 <Silver_Skree>	in other news, this Beloved Tomboyish Daughter arrangement sounds a bit like Stickerbush Symphony, actually
-Jan 30 20:20:44 <Silver_Skree>	weird
-Jan 30 20:21:21 <ZeroOne>	...maybe a ServerMessage subtype wouldn't be a bad idea
-Jan 30 20:22:57 <ZeroOne>	Python can check what type something is, right? Like if (input is type)?
-Jan 30 20:23:47 <PY>	yes, of course
-Jan 30 20:23:54 <ZeroOne>	type(input) is ServerMessage
-Jan 30 20:24:25 <ZeroOne>	This requires some consideration
-Jan 30 20:25:25 <ZeroOne>	It also requires access to a lot of the data that the Bot class stores. I could either pass the Bot to the Message constructor, or only the information the Message needs (control char, server name, bot name)
-Jan 30 20:26:57 <PY>	why does your message type need to know about your bot?
-Jan 30 20:27:51 <ZeroOne>	It doesn't
-Jan 30 20:28:03 <ZeroOne>	It only really needs to know those things I listed
-Jan 30 20:28:17 <PY>	why does it need to know those?
-Jan 30 20:28:29 <ZeroOne>	The control char to determine if it's a command, the server to determine if it's a server message, and the bot name to determine if it's a query
-Jan 30 20:29:14 <PY>	perhaps the message type shouldn't also be responsible for doing that sort of parsing?
-Jan 30 20:29:31 <ZeroOne>	It shouldn't?
-Jan 30 20:29:51 *	KentaTworodani has quit (Ping timeout: 198 seconds)
-Jan 30 20:29:56 <PY>	it's often worth restructuring things so that things don't need to know about other things!
-Jan 30 20:30:11 <ZeroOne>	This is true
-Jan 30 20:30:29 <ZeroOne>	If I push this to GitHub, could you have a look at it and suggest things?
-Jan 30 20:30:45 <PY>	am a little busy right now, unforortunately :(
-Jan 30 20:30:49 <ZeroOne>	sadface
-Jan 30 20:30:50 <ZeroOne>	ok
-Jan 30 20:31:22 <ZeroOne>	Think it's worth getting rid of the namespaces I'm not using?
-Jan 30 20:31:37 <PY>	if you aren't using them!
-Jan 30 20:32:14 <ZeroOne>	Whee
-Jan 30 20:32:23 <ZeroOne>	I am mostly namespaceless.
-Jan 30 20:32:45 <ZeroOne>	50% of my files now no longer have any namespaces.
-Jan 30 20:33:30 <PY>	in c#?
-Jan 30 20:33:33 <ZeroOne>	Yeah
-Jan 30 20:33:41 <PY>	literally did not realise you could do that
-Jan 30 20:33:48 <PY>	not sure why you would :x
-Jan 30 20:34:05 <ZeroOne>	Well, you said "if you aren't using them!"
-Jan 30 20:34:13 <Silver_Skree>	mmmmmm chocolate mint cookies
-Jan 30 20:34:14 <PY>	I thought you meant they were empty!
-Jan 30 20:34:18 <ZeroOne>	And according to ReSharper, half the time I wasn't even using the System namespace
-Jan 30 20:34:26 <PY>	/oh/
-Jan 30 20:34:31 <ZeroOne>	The using statements
-Jan 30 20:34:32 <PY>	importing namespaces, right.
-Jan 30 20:34:34 <ZeroOne>	Those namespaces
-Jan 30 20:34:34 <PY>	yeah
-Jan 30 20:34:43 <PY>	get rid of those :v
-Jan 30 20:34:50 <PY>	I thought you meant for your own code
-Jan 30 20:34:57 <ZeroOne>	I don't have a ZrnBot.whatever namespace
-Jan 30 20:35:03 <ZeroOne>	I am not yet pro enough for that
-Jan 30 20:35:43 <PY>	you should make one
-Jan 30 20:35:58 <ZeroOne>	Hmm. I haven't properly considered where my Network object would go in relation to everything else
-Jan 30 20:36:17 <PY>	is this for your mock?
-Jan 30 20:36:17 <ZeroOne>	Or rather the IO object
-Jan 30 20:36:23 <Silver_Skree>	okay, after spacing out and eating cookies for 5 minutes, SkreeBot no longer crashes on query.
-Jan 30 20:36:32 <ZeroOne>	In general. Mock IO and actual IRC IO
-Jan 30 20:37:12 <PY>	Zrnbot.IO would make sense. INetwork and IRCNetwork in Zrnbot.IO, MockNetwork in Zrnbot.Test.IO
-Jan 30 20:37:35 <ZeroOne>	Oh boy, subnamespaces!
-Jan 30 20:37:42 <ZeroOne>	...that's not the technical term, is it?
-Jan 30 20:37:58 <PY>	they're just namespaces
-Jan 30 20:38:02 <ZeroOne>	Ah
-Jan 30 20:38:35 <ZeroOne>	But I'm also talking about the path an input takes through my code
-Jan 30 20:38:53 <ZeroOne>	Program instantiates ConsoleUI, which instantiates the Bot
-Jan 30 20:39:09 <ZeroOne>	I get an input through the IO object
-Jan 30 20:39:21 <PY>	you generally want to be able to inject things you want to be able to mock
-Jan 30 20:39:26 <ZeroOne>	Dependency injection
-Jan 30 20:39:28 <PY>	yeah
-Jan 30 20:39:37 <PY>	simplest method is just taking an INetwork in the ctor
-Jan 30 20:39:47 <ZeroOne>	Now, I want to pass this input to my UI so it can be displayed
-Jan 30 20:40:02 <PY>	define input here
-Jan 30 20:40:09 <ZeroOne>	I also want to pass it to my Bot so it can be converted into a Message and then acted upon
-Jan 30 20:40:16 <ZeroOne>	Either mock or IRC message
-Jan 30 20:40:24 <ZeroOne>	Server or user
-Jan 30 20:40:29 <PY>	right
-Jan 30 20:40:34 <PY>	how do you think INetwork could look?
-Jan 30 20:40:55 <ZeroOne>	Remind me of what I can define in an interface
-Jan 30 20:41:14 <ZeroOne>	I keep getting interfaces and abstract classes confused
-Jan 30 20:41:29 <PY>	properties, methods, events, I think delegates
-Jan 30 20:41:59 <ZeroOne>	Well, it'd probably want InStream and OutStream properties, to send and receive data
-Jan 30 20:42:38 <PY>	Possibly, but will that let you do what you want?
-Jan 30 20:43:31 <ZeroOne>	What I want is to pass the relevant information to my UI and my Bot, right?
-Jan 30 20:43:46 <PY>	right
-Jan 30 20:44:05 <ZeroOne>	So it'd probably also want to hold a reference to the UI and the bot
-Jan 30 20:44:24 <ZeroOne>	But no
-Jan 30 20:44:29 <ZeroOne>	It doesn't need to know about those things, right?
-Jan 30 20:44:51 <PY>	the best design might actually know about those things, just not specifically what they are
-Jan 30 20:45:06 <ZeroOne>	How does that work?
-Jan 30 20:45:35 <PY>	I'm mostly thinking of using events, which I'm not sure you've covered before?
-Jan 30 20:45:57 <ZeroOne>	I've done events in my Mario engine
-Jan 30 20:46:07 <ZeroOne>	Haven't applied it to non-game things, but I imagine it's the same
-Jan 30 20:46:09 <PY>	oh, goodie
-Jan 30 20:46:13 <PY>	can you see how it could apply here?
-Jan 30 20:46:45 <ZeroOne>	When IRCNetwork receives an input, it fires off an event that both the ConsoleUI and the Bot are subscribed to
-Jan 30 20:46:52 <PY>	right!
-Jan 30 20:46:54 <ZeroOne>	Or perhaps separate events
-Jan 30 20:47:20 <PY>	what for?
-Jan 30 20:47:28 <ZeroOne>	It doesn't matter, does it
-Jan 30 20:47:38 <PY>	I dunno what you want them for
-Jan 30 20:47:52 <ZeroOne>	Well the UI needs the message to display it to the console
-Jan 30 20:48:06 <ZeroOne>	The bot needs it to create the Message object and then do stuff with it
-Jan 30 20:48:13 <ZeroOne>	But they both act on receiving a message
-Jan 30 20:48:19 <ZeroOne>	So the same event should work
-Jan 30 20:48:25 <PY>	yep
-Jan 30 20:48:27 <ZeroOne>	It'd have two subscribers
-Jan 30 20:48:42 <PY>	or however many!
-Jan 30 20:48:46 <ZeroOne>	Right
-Jan 30 20:49:27 <ZeroOne>	Amusingly, while all of this solves a lot of problems, it doesn't solve the original question. What should actually parse the message, if not the Message object
-Jan 30 20:49:42 <ZeroOne>	IRCNetwork shouldn't do it.
-Jan 30 20:49:55 <ZeroOne>	Maybe Bot
-Jan 30 20:50:42 <PY>	maybe. You could do multi-pass? Give the IRCNetwork an IRCMessageParser that knows how to turn messages into naive IRCMessages
-Jan 30 20:50:53 <PY>	then the bot can inform further categorisation
-Jan 30 20:51:26 <ZeroOne>	So IRCNetwork receives an input
-Jan 30 20:51:38 <ZeroOne>	It then passes it to IRCMessageParse that returns an IRCMessage
-Jan 30 20:51:54 <ZeroOne>	THEN it fires the event that both UI and Bot are subscribed to
-Jan 30 20:52:20 <PY>	sounds like it could work!
-Jan 30 20:53:04 <ZeroOne>	And then Bot could take it further and say "Ok, this is a ServerMessage" or "Ok, this is a UserMessage"
-Jan 30 20:54:03 *	MenTaLguY has quit (Ping timeout: 194 seconds)
-Jan 30 20:54:08 <PY>	right, the bot needs to be responsible for routing 
-Jan 30 20:54:35 <ZeroOne>	Now, IRCMessage wouldn't simply be the raw input, but it /could/ contain it
-Jan 30 20:54:56 <PY>	there's a lot of structure you can give just an irc message
-Jan 30 20:55:57 <ZeroOne>	True, but I also have to keep it quite generic. I should only use the things common to ALL IRC messages, server and user
-Jan 30 20:56:26 <PY>	right, but that's still a lot
-Jan 30 20:56:27 <ZeroOne>	Also, I like how you're busy, but you're still helping
-Jan 30 20:56:41 <PY>	I can do some degree of multitasking!
-Jan 30 20:56:45 <ZeroOne>	Hahaha
-Jan 30 20:56:52 <ZeroOne>	Py.HelpThread
-Jan 30 20:57:04 <ZeroOne>	Py.WorkThread is await
-Jan 30 20:58:14 <ZeroOne>	"Namespace does not correspon to file location, should be: 'ZrnBot'"
-Jan 30 20:58:32 <ZeroOne>	I take it ReSharper is suggesting I have an IO folder inside my ZrnBot folder
-Jan 30 20:58:41 <PY>	yeah
-Jan 30 20:58:44 <ZeroOne>	Ah.
-Jan 30 20:58:48 <ZeroOne>	And, of course, Io*
-Jan 30 21:01:40 <katsu>	ZeroOne, it's pretty empty for $60
-Jan 30 21:01:45 <katsu>	Elite: Dangerous
-Jan 30 21:01:52 <ZeroOne>	oh he's alive!
-Jan 30 21:01:54 <katsu>	I mean, they have scale
-Jan 30 21:02:02 <ZeroOne>	Like, accurate scale?
-Jan 30 21:02:06 *	katsu was out for meetings and lunch
-Jan 30 21:02:19 <katsu>	by scale I mean the entire milky way galaxy
-Jan 30 21:02:20 <ZeroOne>	lunch is nice
-Jan 30 21:02:26 <katsu>	and yes, accurate distances
-Jan 30 21:02:36 <ZeroOne>	That's actually quite appealing.
-Jan 30 21:02:58 <katsu>	but because of this, there's just a bunch of stations in places with random quests and empty space between them
-Jan 30 21:03:34 <katsu>	The experiences they do have are polished well, but there just aren't a lot of them
-Jan 30 21:03:42 <katsu>	or at least, they do a poor job of telling you about them
-Jan 30 21:03:42 <ZeroOne>	Can't just fly off in a direction and find some procedurally generated coolthing?
-Jan 30 21:04:26 <katsu>	You can jump between systems, trying to use supercruise between systems is technically possible, but not feasible
-Jan 30 21:04:50 <katsu>	Even travelling at 1000c, it'll still take a couple days to make the trek
-Jan 30 21:04:56 <katsu>	literally a couple of real earth days
-Jan 30 21:05:30 <ZeroOne>	I'll just casually recreate Voyager and spend 70 real years travelling from one side of the galaxy to the other.
-Jan 30 21:05:40 <katsu>	but yeah, there's exploring systems and selling the data to far away stations
-Jan 30 21:05:46 <katsu>	there's trading between stations
-Jan 30 21:06:07 <ZeroOne>	Worth $60?
-Jan 30 21:06:10 <katsu>	I think there's mining
-Jan 30 21:06:23 <katsu>	$60, not at the moment, but they're planning additional content I guess
-Jan 30 21:06:32 <ZeroOne>	I'll probably wait then
-Jan 30 21:07:32 *	zephyrtronium (~a_grue@64.128.228.50) has joined #sr388
-Jan 30 21:09:01 <katsu>	Also, about the namespaces
-Jan 30 21:09:07 <katsu>	ZrnBot.IO is correct
-Jan 30 21:09:15 <ZeroOne>	Oh
-Jan 30 21:09:17 <katsu>	ZrnBot.Io is not
-Jan 30 21:09:32 <katsu>	acronyms less than three characters are kept all caps
-Jan 30 21:09:39 <ZeroOne>	Ah, ok
-Jan 30 21:09:42 <katsu>	See: System.IO
-Jan 30 21:10:06 <katsu>	Now the shitty thing is if you have a two letter acronym followed by a word
-Jan 30 21:10:09 <katsu>	IOHandler
-Jan 30 21:10:19 <katsu>	that's the proper name
-Jan 30 21:10:31 <katsu>	but it might look a bit odd
-Jan 30 21:12:05 <ZeroOne>	This is a great video. Should you buy Elite: Dangerous?
-Jan 30 21:12:08 <ZeroOne>	"Yes, you absolutely should."
-Jan 30 21:12:11 <ZeroOne>	well
-Jan 30 21:12:35 <katsu>	Well, that convinced me
-Jan 30 21:12:44 <katsu>	Such a great argument
-Jan 30 21:12:48 <ZeroOne>	Heh
-Jan 30 21:12:50 <Silver_Skree>	I have paused on bot development and am now watching more Nagi-Asu
-Jan 30 21:12:59 <ZeroOne>	He is actually going to discuss pros and cons.
-Jan 30 21:13:03 <Silver_Skree>	things get crazy
-Jan 30 21:13:10 <ZeroOne>	Currently, the cons are server load, but I imagine that's a bit better now?
-Jan 30 21:13:21 <katsu>	Wait, there's other players?
-Jan 30 21:13:27 <ZeroOne>	Heh
-Jan 30 21:13:55 <ZeroOne>	I guess in something the size of an entire galaxy, it'd be easy to not see people
-Jan 30 21:14:21 <Silver_Skree>	I miss the first-half ed theme
-Jan 30 21:14:31 <katsu>	That is a good ED theme
-Jan 30 21:14:36 <Silver_Skree>	yes
-Jan 30 21:14:41 <ZeroOne>	Well, I have £400. I can afford a tenth of that.
-Jan 30 21:17:24 <katsu>	For the IRC library I had been working on, I completely abstracted out the network IO
-Jan 30 21:17:26 <katsu>	https://github.com/nehresmann/Nyaxix.Irc/blob/master/Nyaxix.Irc/IConnection.cs
-Jan 30 21:18:01 <katsu>	Literally just an event that would fire when stuff comes in and a function to call to send stuff out
-Jan 30 21:18:14 <ZeroOne>	Ah
-Jan 30 21:18:29 <katsu>	but that was generic IRC library
-Jan 30 21:20:21 <katsu>	Also, the rest of that code is old
-Jan 30 21:23:47 <ZeroOne>	I think I'll let it download as I work on ZrnBot
-Jan 30 21:24:26 <katsu>	Also, don't play the single player tutorials from the launcher
-Jan 30 21:24:34 <katsu>	start the full game, there are up-to-date tutorials in there
-Jan 30 21:24:38 <ZeroOne>	Righto.
-Jan 30 21:25:36 <ZeroOne>	Is the Elite Dangerous Store account the same as your actual ingame account?
-Jan 30 21:28:37 <katsu>	Yeah, I believe so
-Jan 30 21:29:02 <ZeroOne>	Right. Better not use KeePass to generate a password I'll have zero chance of remembering ingame
-Jan 30 21:29:15 <katsu>	You can have the launcher remember your password
-Jan 30 21:29:21 <ZeroOne>	KeePass it is
-Jan 30 21:29:22 <katsu>	You log in from the launcher
-Jan 30 21:29:48 <katsu>	So even if the launcher isn't remembering it, you can easily use keypass to paste it in
-Jan 30 21:34:19 <ZeroOne>	"Setup must restart your computer."
-Jan 30 21:34:21 <ZeroOne>	ahahahahaha
-Jan 30 21:34:28 <ZeroOne>	nah thanks
-Jan 30 21:35:42 <ZeroOne>	Cool, installing
-Jan 30 21:36:49 <katsu>	I will say that head tracking adds a lot to the immersion
-Jan 30 21:37:00 <ZeroOne>	Yeah, I told my dad about that
-Jan 30 21:43:35 <ZeroOne>	...this doesn't seem like it should work
-Jan 30 21:43:41 <ZeroOne>	"public IrcMessage IrcMessage"
-Jan 30 21:44:52 <ZeroOne>	And yet, neither ReSharper or VS is telling me off.
-Jan 30 21:46:02 <katsu>	Nope, it can determine type vs identifier based on the grammar
-Jan 30 21:46:44 <ZeroOne>	Yeah, I just realised I'd be accessing that by doing something like event.IrcMessage
-Jan 30 21:46:55 <ZeroOne>	IrcMessage is clearly not a class in this case
-Jan 30 21:48:09 <katsu>	It could become dicy if you had a static property called IrcMessage and also an internal class called IrcMessage, but even then the parser can figure it out
-Jan 30 21:48:25 <ZeroOne>	I think at that point, I might want to consider renaming a couple of things
-Jan 30 21:52:34 <ZeroOne>	Should my INetwork have properties for an input stream and an output stream, or would I just be sending and receiving through the same stream here? NetworkStream, I imagine
-Jan 30 21:52:59 <PY>	you're probably thinking too low level
-Jan 30 21:53:09 <PY>	you want to distribute one stream across n clients, you can't expose the raw stream
-Jan 30 21:53:47 <PY>	otherwise you'll get the UI picking up one message and the bot picking up another, and never the twain shall meet
-Jan 30 21:54:10 <ZeroOne>	So this interface would provide methods for sending and receiving, but the ACTUAL stream stuff is done elsewhere?
-Jan 30 21:54:18 <katsu>	So my setup was an IConnection
-Jan 30 21:54:57 <katsu>	It states that an event is fired when data comes in, providing a string of the data
-Jan 30 21:55:03 <PY>	katsu's setup is basically what I was going to try and lead you towards
-Jan 30 21:55:05 <katsu>	and allows data to be sent out, as a string
-Jan 30 21:55:24 <katsu>	You'd have one IConnection per IRC network you're connected to
-Jan 30 21:55:27 <PY>	you need something on that level of abstraction, you can't think in streams if you want to split it like that
-Jan 30 21:56:07 <katsu>	You could possibly aggregate all of them into a single interface though
-Jan 30 21:56:27 <katsu>	Could possibly be useful, but I'd rather aggregate as another layer
-Jan 30 21:59:05 <ZeroOne>	So how should I do this
-Jan 30 21:59:26 <ZeroOne>	I'm guessing my INetwork interface would essentially be your IConnection interface
-Jan 30 22:00:13 <katsu>	So yeah, I'll try to explain the abstractions I was thinking of
-Jan 30 22:00:34 <katsu>	At the lowest level, you've got the network io
-Jan 30 22:00:41 <katsu>	but IRC shouldn't have to care about that
-Jan 30 22:00:53 <katsu>	So what does it need?
-Jan 30 22:01:03 <katsu>	It needs to know when a message is received
-Jan 30 22:01:11 <katsu>	and it needs to be able to send data
-Jan 30 22:01:16 <katsu>	It doesn't care how
-Jan 30 22:01:22 <ZeroOne>	For which I have a MessageReceivedEventArgs
-Jan 30 22:01:26 <katsu>	the second thing is that IRC is all string-based communication
-Jan 30 22:01:50 <katsu>	So you don't need the complexities of having to send byte arrays and whatnot
-Jan 30 22:02:14 <katsu>	From that information, you have an event and a method
-Jan 30 22:02:48 <katsu>	I've tacked on a bit more info because of multi-network stuff
-Jan 30 22:03:02 <katsu>	but for now ignore that
-Jan 30 22:03:09 <katsu>	the Url and Server is not important
-Jan 30 22:03:26 <ZeroOne>	brb, dad wants me. Keep talking, I'll catch up
-Jan 30 22:03:40 <katsu>	Now, once you have that, you need something to receive messages and handle the messages that arrive
-Jan 30 22:04:31 <katsu>	and by handle messages, this may involve sending responses
-Jan 30 22:05:44 <katsu>	This becomes more complex, because "handling" a "message" is not trivial
-Jan 30 22:05:50 <katsu>	what is a message?
-Jan 30 22:05:56 <katsu>	we need to make it simpler
-Jan 30 22:06:10 <katsu>	A message needs to be defined
-Jan 30 22:06:21 <katsu>	So in my method, I went type crazy
-Jan 30 22:06:32 <katsu>	definitely not a requirement
-Jan 30 22:06:48 <katsu>	you can go much simpler and move some of that logic over to the handlers
-Jan 30 22:06:57 <katsu>	but that's getting ahead of myself
-Jan 30 22:07:25 <katsu>	This is where we get into IRC RFC
-Jan 30 22:07:34 <katsu>	You need something to abstract that
-Jan 30 22:07:43 <katsu>	the format of an IRC message
-Jan 30 22:07:47 <katsu>	break it down into components
-Jan 30 22:08:25 <PY>	here comes the regex
-Jan 30 22:08:27 <katsu>	IRC RFC defines these things as the message prefix, message command, and message parameters (with a special case for the trailing parameter)
-Jan 30 22:08:54 <katsu>	and the prefix is further defined
-Jan 30 22:09:11 <katsu>	So I created two classes
-Jan 30 22:09:17 <katsu>	Message and Prefix
-Jan 30 22:09:33 <katsu>	These could be structs
-Jan 30 22:09:46 <katsu>	they simply contain data and some light logic to reformat themselves for output
-Jan 30 22:10:12 <katsu>	keep in mind that object construction is always best left to factory classes
-Jan 30 22:10:39 <katsu>	Message and Prefix contain the data we want out of an irc message
-Jan 30 22:10:53 <katsu>	and we have a MessageFactory to build Messages
-Jan 30 22:11:22 <katsu>	(please keep in mind you also want an interface for MessageFactory for unit testing purposes)
-Jan 30 22:11:37 <katsu>	You don't necessarily need interfaces for Message and Prefix
-Jan 30 22:11:44 <katsu>	you could treat them like primitives
-Jan 30 22:11:55 <katsu>	just don't start putting super complex logic in them
-Jan 30 22:12:04 <katsu>	If they're primitives, then keep them that way
-Jan 30 22:12:37 <katsu>	Also PY, I'll skip the regex, that's implementation detail, not design
-Jan 30 22:13:28 <PY>	haha
-Jan 30 22:13:52 <katsu>	So once you've got a MessageFactory to provide you with Message objects from the strings received from an IConnection, you can begin to work with them
-Jan 30 22:14:11 <katsu>	I went further and built ICommand objects from those, but that may not be desirable
-Jan 30 22:14:13 <katsu>	that's a lot of types
-Jan 30 22:14:18 <katsu>	so I'll skip that for now
-Jan 30 22:14:57 <katsu>	These messages are all handled differently based on what they are
-Jan 30 22:15:09 <katsu>	PING messages need a PONG message response generated and sent out
-Jan 30 22:15:41 <katsu>	when you join a channel, you'll get NAMES messages
-Jan 30 22:15:47 <katsu>	and so on
-Jan 30 22:16:30 *	KentaTworodani (~Kenta-PC@75-114-180-194.res.bhn.net) has joined #sr388
-Jan 30 22:16:30 *	ChanServ sets modes [#sr388 +o KentaTworodani]
-Jan 30 22:17:46 <katsu>	Just like we don't want to know how to create a Message from a raw irc string in this class (for now we'll call it the IrcClient), we don't want to know about how a message is handled
-Jan 30 22:18:11 <katsu>	There are many, many IRC commands
-Jan 30 22:18:36 <katsu>	and we may want to be able to tackle them in one or more handlers so we can separate concerns
-Jan 30 22:18:52 <katsu>	This is the chain of responsibility pattern
-Jan 30 22:19:02 <ZeroOne>	I quite like the idea of Message and Prefix classes/structs
-Jan 30 22:19:08 <ZeroOne>	It'd give me some experience with the Factory pattern
-Jan 30 22:20:02 <katsu>	I'll give you some help with the factory pattern
-Jan 30 22:20:16 <katsu>	Wtih MessageFactory, you're gonna want a simple interface
-Jan 30 22:20:20 <katsu>	With, even
-Jan 30 22:20:23 <ZeroOne>	Much appreciated
-Jan 30 22:20:48 <katsu>	Message BuildMessage(string ircMessage);
-Jan 30 22:20:49 <PY>	like many patterns, the factory pattern is an amazingly simple concept
-Jan 30 22:21:01 <katsu>	my bad, let me give you the whole interface
-Jan 30 22:21:08 <katsu>	interface IMessageFactory
-Jan 30 22:21:09 <katsu>	{
-Jan 30 22:21:17 <katsu>	    Message BuildMessage(string ircMessage);
-Jan 30 22:21:18 <katsu>	}
-Jan 30 22:21:21 <katsu>	there you go
-Jan 30 22:21:27 <ZeroOne>	Hahaha
-Jan 30 22:21:35 <PY>	that literally is all it is
-Jan 30 22:21:37 <ZeroOne>	Is that literally the Factory pattern?
-Jan 30 22:21:38 <ZeroOne>	Wow
-Jan 30 22:21:39 <PY>	yes
-Jan 30 22:21:46 <ZeroOne>	That's nothing
-Jan 30 22:21:51 <katsu>	but so powerful
-Jan 30 22:21:52 <PY>	and for all that you get a lot of desirable behaviour
-Jan 30 22:22:08 <ZeroOne>	why hasn't this been covered in uni argh
-Jan 30 22:22:16 <katsu>	I'll actually make one change and you'll see why it is incredbily powerful
-Jan 30 22:22:25 <katsu>	interface IMessageFactory
-Jan 30 22:22:26 <katsu>	{
-Jan 30 22:22:33 <katsu>	    IMessage BuildMessage(string ircMessage);
-Jan 30 22:22:34 <katsu>	}
-Jan 30 22:22:44 <katsu>	Now you have a factory that returns an /interface/
-Jan 30 22:22:57 <katsu>	This is where factories truly become powerful
-Jan 30 22:23:04 <PY>	even better, a factory /interface/ that returns an interface
-Jan 30 22:23:27 <PY>	if you have an IMessageFactory you can have no goddamn idea how it does what it does, and that's super neat
-Jan 30 22:23:30 <katsu>	Yes, so you can mock your factory in unit tests to return a mock message
-Jan 30 22:23:42 <ZeroOne>	That is absolutely ridiculous
-Jan 30 22:23:43 <ZeroOne>	I love it
-Jan 30 22:24:15 <katsu>	For the Message, where it's almost a primitive, the factory is only marginally useful
-Jan 30 22:24:29 <ZeroOne>	There's a lot of information being thrown at me here and I'm not sure where to start. I'm fairly certain my bot already needs a good deal of refactoring
-Jan 30 22:24:33 <katsu>	for the part where I created a billion IRC command types, it became insanely useful
-Jan 30 22:24:49 <katsu>	interface ICommandFactory
-Jan 30 22:24:50 <katsu>	{
-Jan 30 22:25:01 <katsu>	    ICommand BuildCommand(IMessage message);
-Jan 30 22:25:02 <katsu>	}
-Jan 30 22:25:25 <katsu>	So now your factory interface has a method that takes an interface and returns an interface
-Jan 30 22:25:57 <ZeroOne>	So factories are exceptionally good at cranking out a lot of the same type
-Jan 30 22:27:00 <katsu>	So I'll draw it out right now
-Jan 30 22:27:12 <PY>	factories are good when you need to abstract the details of how you actually make something. Whether because how you do that is complex, because you need to be able to test what happens to what it produces, or whatever, the core point of a factory is that it abstracts away that new
-Jan 30 22:28:35 <ZeroOne>	Ooh, so anything that implements ICommandFactory will be able to call BuildCommand and pass it anything that implements the IMessage interface
-Jan 30 22:29:01 <ZeroOne>	And BuildCommand will do whatever that specific class requires it to do
-Jan 30 22:29:05 <PY>	anything which /has/ something that implements ICommandFactory
-Jan 30 22:30:10 <katsu>	Working on a diagram
-Jan 30 22:30:55 <PY>	in katsu's case, his primary implementation is going to abstract away all the nasty routing involved in turning an IRC message into an IRC command
-Jan 30 22:31:09 <PY>	that logic isn't something you want everyone to have to know about
-Jan 30 22:31:22 <PY>	it may be logic which changes depending on who's calling it
-Jan 30 22:31:34 <PY>	it's certainly logic that you might need to test
-Jan 30 22:32:34 <katsu>	Right, but in my system there's a nasty issue where the handler still needs to know the actual ICommand type
-Jan 30 22:32:48 <katsu>	It's not perfect, but it works
-Jan 30 22:32:59 <katsu>	It boils down to a handler doing
-Jan 30 22:33:20 <katsu>	var ping = command as Ping;
-Jan 30 22:33:28 <katsu>	if (ping != null)
-Jan 30 22:33:34 <katsu>	{ /* do things */ }
-Jan 30 22:33:37 <ZeroOne>	BTW, unrelated, but in my Mario engine, I'm having Mario checking the type of whatever he collided with to determine how he should react. Can this be better written using the visitor pattern?
-Jan 30 22:37:53 <katsu>	Here we go
-Jan 30 22:37:54 <katsu>	https://dl.dropboxusercontent.com/u/5653962/irc/interface_overview.png
-Jan 30 22:38:06 <ZeroOne>	fancy
-Jan 30 22:38:38 <katsu>	Notice something interesting
-Jan 30 22:38:49 <ZeroOne>	IMessage is at the centre of it all?
-Jan 30 22:39:02 <katsu>	The only thing that relies on a concrete class is the factory
-Jan 30 22:40:11 <ZeroOne>	The concrete class being the IrcClient?
-Jan 30 22:40:27 <katsu>	IrcClient is a concrete class
-Jan 30 22:40:36 <katsu>	but it only relies on interfaces
-Jan 30 22:40:45 <ZeroOne>	Oh, yes
-Jan 30 22:40:48 <katsu>	IConnection, IMessageFactory, IMessage, and IMessageHandler
-Jan 30 22:40:50 <ZeroOne>	Message is the concrete class
-Jan 30 22:40:55 <katsu>	also, I did make a mistake in the diagram
-Jan 30 22:41:01 <ZeroOne>	*gasp*
-Jan 30 22:41:02 <katsu>	I forgot that IMessageFactory doesn't rely on Message
-Jan 30 22:41:10 <ZeroOne>	faaaaart
-Jan 30 22:41:27 <ZeroOne>	Should I just ignore that line?
-Jan 30 22:41:28 <katsu>	There should be a class called MessageFactory, which relies on IMessageFactory, IMessage, and Message
-Jan 30 22:43:00 <katsu>	Updated, refresh
-Jan 30 22:43:42 <katsu>	anyways, that's the basic idea
-Jan 30 22:44:15 <ZeroOne>	So MessageFactory holds a reference to Message, IMessageFactory and IMessage?
-Jan 30 22:44:34 <katsu>	MessageFactory implements IMessageFactory
-Jan 30 22:44:52 <katsu>	IMessageFactory declares a method that returns IMessage
-Jan 30 22:45:10 <katsu>	so by implementing IMessageFactory, MessageFactory also relies on the IMessage interface
-Jan 30 22:45:29 <katsu>	MessageFactory builds an instance of Message and returns that
-Jan 30 22:46:03 <ZeroOne>	Right
-Jan 30 22:46:23 <katsu>	So by building an instance of Message, it has to rely on it too
-Jan 30 22:46:42 <katsu>	and by rely, I mean it is "coupled" to its implementation
-Jan 30 22:46:53 <katsu>	well, its interface
-Jan 30 22:47:07 <katsu>	If the Message constructor changed, MessageFactory has to change to adapt
-Jan 30 22:47:22 <katsu>	but anything relying on IMessage won't have to change
-Jan 30 22:47:38 <katsu>	So IrcClient, for instance
-Jan 30 22:47:50 <katsu>	If you change Message, IrcClient doesn't have to change
-Jan 30 22:48:15 <katsu>	Those two components observe loose coupling
-Jan 30 22:48:57 <katsu>	IrcClient and MessageFactory are also loosely coupled
-Jan 30 22:48:58 <ZeroOne>	So I'm looking to implement this sort of thing in my bot
-Jan 30 22:49:22 <katsu>	Yeah
-Jan 30 22:49:38 <katsu>	The key is to know where to break down a problem into pieces and abstract those pieces away
-Jan 30 22:49:49 <katsu>	So we have the IrcClient
-Jan 30 22:50:01 <katsu>	What are its responsibilities?
-Jan 30 22:50:18 <katsu>	at a high level, it receives messages and handles them
-Jan 30 22:50:24 <katsu>	good, stop there
-Jan 30 22:50:28 <katsu>	that's what IrcClient does
-Jan 30 22:50:41 <katsu>	How does IrcClient do those things?
-Jan 30 22:50:48 <katsu>	those are new interfaces that it uses
-Jan 30 22:52:16 <katsu>	Designing your application in this way puts all of the tight coupling in two distinct places
-Jan 30 22:52:26 <katsu>	1. In the factory classes
-Jan 30 22:52:33 <katsu>	2. In the application start method
-Jan 30 22:52:54 <katsu>	and there are a lot of crazy tools to remove the second one
-Jan 30 22:53:00 <katsu>	but I won't get into that
-Jan 30 22:53:13 <katsu>	If you've designed your application like this, you can do that later
-Jan 30 22:53:17 <ZeroOne>	Haha. Yeah, this stuff is complex enough as it is :P
-Jan 30 22:54:35 <katsu>	You go down this road far enough, you may need a FactoryFactory
-Jan 30 22:54:39 <katsu>	Not for this application specifically
-Jan 30 22:54:51 <ZeroOne>	A factory that creates factories
-Jan 30 22:54:58 <katsu>	an IRC client probably isn't complex enough for that
-Jan 30 22:55:01 <ZeroOne>	I'm giggling, honestly.
-Jan 30 22:55:05 <katsu>	I usually call those providers
-Jan 30 22:55:09 <katsu>	but that's me
-Jan 30 22:55:48 <ZeroOne>	But they're essentially the same?
-Jan 30 22:55:52 <katsu>	yeah
-Jan 30 22:56:04 <katsu>	they're a factory that creates factories
-Jan 30 22:56:43 <katsu>	This one isn't really a factory
-Jan 30 22:56:45 <katsu>	but an example
-Jan 30 22:56:46 <katsu>	https://github.com/nehresmann/Nyaxix.Serialization/blob/master/Nyaxix.Serialization/SerializationFactoryProvider.cs
-Jan 30 22:57:37 <katsu>	This holds instances of factories, it doesn't build them
-Jan 30 22:58:20 <katsu>	I did forget the where clause on the generics though
-Jan 30 22:58:30 <katsu>	should have included
-Jan 30 22:58:35 <katsu>	"where T : ISerializationFactory"
-Jan 30 22:58:46 *	Black_Falcon has quit (Quit: Connection reset by beer.)
-Jan 30 22:58:55 <ZeroOne>	fucker that's my quit message
-Jan 30 22:59:05 <ZeroOne>	Oh, no it's not.
-Jan 30 22:59:10 <ZeroOne>	never mind.
-Jan 30 22:59:16 <katsu>	err, not quite
-Jan 30 22:59:18 <katsu>	I mean
-Jan 30 22:59:42 <katsu>	I think that is defined correctly
-Jan 30 22:59:46 <katsu>	it's been a while
-Jan 30 22:59:55 <katsu>	T was the type of object to serialize/deserialize
-Jan 30 23:00:05 <katsu>	which could be anything
-Jan 30 23:00:22 <katsu>	I enforced what could be sent via the method parameter
-Jan 30 23:00:28 <katsu>	ISerializationFactory<T>
-Jan 30 23:01:00 <ZeroOne>	So it's a way for serialising/deserialising damn near anything
-Jan 30 23:01:04 <ZeroOne>	But, generically
-Jan 30 23:01:25 <katsu>	meeting time
-Jan 30 23:01:30 <katsu>	and yes
-Jan 30 23:01:30 <ZeroOne>	dangit
-Jan 30 23:01:40 <ZeroOne>	Have fun in the meeting
-Jan 30 23:01:52 <ZeroOne>	I need to consider what I'm going to need to refactor here
-Jan 30 23:01:54 <katsu>	You just have to define an ISerializationFactory<T> object for some type T, then give it to this provider
-Jan 30 23:01:59 <ZeroOne>	Which is probably everything
-Jan 30 23:02:13 <katsu>	and then pass the provider to the serialization or deserialization process
-Jan 30 23:02:29 <katsu>	You can look at that entire project to see how it works
-Jan 30 23:02:53 <katsu>	https://github.com/nehresmann/Nyaxix.Serialization/tree/master/Test.Nyaxix.Serialization
-Jan 30 23:02:56 <ZeroOne>	True, but I learn far better by doing it as opposed to reading it
-Jan 30 23:02:58 <katsu>	look at the test to see how it is used
-Jan 30 23:03:32 <ZeroOne>	Which always has me in the loop of "If I do it, I'll learn it, but to do it, I need to learn how to do it"
-Jan 30 23:03:38 <katsu>	heh
-Jan 30 23:03:41 <katsu>	anyways, back in a bit
-Jan 30 23:04:04 <ZeroOne>	hence why I'm usually pestering PY for a line-by-line set of instructions :P
-Jan 30 23:09:58 <ZeroOne>	I'm gonna read back from the top. Might make what I need to do a little clearer
-Jan 30 23:15:49 <ZeroOne>	yep, that's a lot of stuff
-Jan 30 23:17:53 <Silver_Skree>	aw come on
-Jan 30 23:17:55 <Silver_Skree>	plex plz
-Jan 30 23:18:03 <Silver_Skree>	I had to leave off in the middle of an episode
-Jan 30 23:18:24 <Silver_Skree>	now it's just hanging up and not doing anything when I ask it to resume
-Jan 30 23:18:25 <Silver_Skree>	arrrgh
-Jan 30 23:19:11 <Silver_Skree>	and when I play from beginning and try to just seek there it exits out of playing
-Jan 30 23:19:15 <Silver_Skree>	:|
-Jan 30 23:21:22 *	Silver_Skree tries web client
-Jan 30 23:21:36 *	Silver_Skree gets beginning of episode anyway
-Jan 30 23:21:48 <Silver_Skree>	fuck it, I'll watch from the beginning again.
-Jan 30 23:21:52 <Silver_Skree>	grr.
-Jan 30 23:23:58 <ZeroOne>	Oh, let's see if I can get this
-Jan 30 23:24:10 <ZeroOne>	ZrnBot receives some string from the IRC server
-Jan 30 23:25:11 <Silver_Skree>	IRC is amazing.
-Jan 30 23:25:11 <ZeroOne>	The class that receives it calls a method within MethodFactory
-Jan 30 23:25:19 <ZeroOne>	MessageFactory*
-Jan 30 23:25:22 <Silver_Skree>	it's so oooold
-Jan 30 23:25:34 <Silver_Skree>	and yet
-Jan 30 23:25:45 <ZeroOne>	MessageFactory implements the IMessageFactory interface which defines a method that returns an IMessage
-Jan 30 23:25:46 <Silver_Skree>	here we are writing clients for it
-Jan 30 23:26:09 <ZeroOne>	Message implements IMessage
-Jan 30 23:26:36 <ZeroOne>	So ZrnBot is receiving an input and is using the MessageFactory to create a Message object from that input?
-Jan 31 00:22:39 <katsu>	Also, zrn, you've pretty much got it
-Jan 31 00:22:49 *	ZeroOne success
-Jan 31 00:22:57 <katsu>	I say pretty much because remember that ZrnBot is using interfaces
-Jan 31 00:23:19 <katsu>	<ZeroOne> So ZrnBot is receiving an input and is using the MessageFactory to create a Message object from that input?
-Jan 31 00:23:21 <katsu>	changed to
-Jan 31 00:24:00 <katsu>	<ZeroOne> So ZrnBot is receiving an input from INetwork and is using the IMessageFactory to create an IMessage object from that input?
-Jan 31 00:24:15 <katsu>	So when you construct ZrnBot, it needs two things here
-Jan 31 00:24:28 <katsu>	ZrnBot(INetwork network, IMessageFactory messageFactory)
-Jan 31 00:25:19 <katsu>	Doing it like that allows ZrnBot to use any INetwork or any IMessageFactory
-Jan 31 00:25:23 <katsu>	which
-Jan 31 00:25:37 <katsu>	1. Enables freedom to swap internal implementations without modifying ZrnBot
-Jan 31 00:25:45 <ZeroOne>	That seems like a step towards connecting to multiple networks
-Jan 31 00:25:48 <katsu>	2. Allows easy testing of the ZrnBot class
-Jan 31 00:26:08 <katsu>	So to connect to multiple networks, you have to add a few different things
-Jan 31 00:26:21 <katsu>	depending on what kind of interaction you want between networks
-Jan 31 00:26:52 <ZeroOne>	zero
-Jan 31 00:27:02 <katsu>	Then it is fairly trivial
-Jan 31 00:27:09 <katsu>	have multiple ZrnBots
-Jan 31 00:27:17 <ZeroOne>	Yeah, I figured
-Jan 31 00:28:07 <ZeroOne>	I think what I'll do is, sometime today (i.e., after I've gone to bed and woken up), I'll figure out what the Network class actually needs, given I've been told that I've been thinking too low-level with streams
-Jan 31 00:28:24 <ZeroOne>	I mean, I imagine I'll need streams eventually
-Jan 31 00:28:40 <katsu>	That's going to be in the implementation of INetwork
-Jan 31 00:28:46 <katsu>	the interface just needs an event and a method
-Jan 31 00:28:55 <katsu>	event is fired on recieving a message
-Jan 31 00:29:04 <ZeroOne>	Which I've already written
-Jan 31 00:29:08 <ZeroOne>	The event, that is
-Jan 31 00:29:11 <katsu>	method sends a string to the server
-Jan 31 00:29:28 <katsu>	That's it, interface is done
-Jan 31 00:29:32 <ZeroOne>	Whee
-Jan 31 00:29:48 <katsu>	Now an implementation, that's where it gets interesting
-Jan 31 00:30:36 <katsu>	For testing, you can make a fake INetwork implementation that fires events and checks what ZrnBot sends without touching the network
-Jan 31 00:31:30 <katsu>	For the implementation, you'd make a class that takes a uri and establishes a connection to it
-Jan 31 00:32:52 *	KentaTworodani has quit (Ping timeout: 198 seconds)
-Jan 31 00:33:16 <katsu>	likely using a System.Net.NetworkStream
-Jan 31 00:33:22 <ZeroOne>	Ah, the Bot class is going to hold a reference to an INetwork, which will allow it to subscribe to the "input received" event
-Jan 31 00:33:30 <ZeroOne>	But what about the UI?
-Jan 31 00:33:31 <katsu>	yeah
-Jan 31 00:33:36 <ZeroOne>	Oh, never mind
-Jan 31 00:33:49 <ZeroOne>	The way I currently have it, the UI instantiates the Bot class.
-Jan 31 00:34:06 <ZeroOne>	Possibly not what it should be doing, but that'd certainly make it able to subscribe
-Jan 31 00:42:04 <TheFleetingDuck>	going to bed. night aLL
-Jan 31 00:42:07 <ZeroOne>	Night
-Jan 31 00:42:10 <ZeroOne>	I'll be off soon too
-Jan 31 00:42:17 *	TheFleetingDuck has quit (Quit: Leaving)
-Jan 31 00:43:08 <katsu>	So, for the UI, that becomes a completely different thing
-Jan 31 00:43:25 <katsu>	That should follow MVVM
-Jan 31 00:43:28 <katsu>	Model View ViewModel
-Jan 31 00:43:43 <katsu>	Where ZrnBot is a Model
-Jan 31 00:44:10 <katsu>	Or may just be one part of some model class
-Jan 31 00:44:28 <ZeroOne>	But I do definitely need to separate the UI from the bot initialisation
-Jan 31 00:44:52 *	KentaKurodani (~Kenta-PC@75-114-180-194.res.bhn.net) has joined #sr388
-Jan 31 00:44:52 *	ChanServ sets modes [#sr388 +o KentaKurodani]
-Jan 31 00:45:06 <Silver_Skree>	wait, GUI, or are we talking about a console that uses MVVM?
-Jan 31 00:45:12 <ZeroOne>	Console
-Jan 31 00:45:17 <Silver_Skree>	heh
-Jan 31 00:45:18 <Silver_Skree>	okay then
-Jan 31 00:45:29 <katsu>	Ah, that's probably simpler
-Jan 31 00:45:37 <katsu>	MVVM may be a bit much
-Jan 31 00:45:49 <ZeroOne>	But, if I write it correctly (possible an IUserInterface), I probably could quite easily swap it out with an actual GUI
-Jan 31 00:45:50 <Silver_Skree>	I was gonna say
-Jan 31 00:46:08 <Silver_Skree>	it's not like you can't do MVVM with a console
-Jan 31 00:46:15 <katsu>	Well, you see, with MVVM, you'd not have ZrnBot know about any UI
-Jan 31 00:46:34 <katsu>	ZrnBot would just mess with data
-Jan 31 00:46:36 <katsu>	and only data
-Jan 31 00:47:01 <katsu>	The ViewModel would observe the data ZrnBot is changing and notify the View
-Jan 31 00:47:09 <katsu>	let me rephrase that
-Jan 31 00:47:16 <katsu>	The ViewModel would observe and transform the data ZrnBot is changing and notify the View
-Jan 31 00:47:24 <ZeroOne>	Uni had an app where it had a ConsoleUI that implemented IUserInterface. It was written to the point where they could just swap in a proper WinForms UI and implement the same interface
-Jan 31 00:47:37 <ZeroOne>	But I don't think it was MVVM
-Jan 31 00:47:45 <katsu>	It most certainly was not
-Jan 31 00:47:56 <katsu>	a model relies on nothing but other models
-Jan 31 00:48:26 <katsu>	viewmodels rely on models
-Jan 31 00:48:42 <ZeroOne>	Ah, so if I wanted to remove the Console UI and replace it with WinForms/WPF, I'd need to make it MVVM
-Jan 31 00:48:49 <katsu>	and views are (in WPF) loosely connected to viewmodels
-Jan 31 00:49:48 <katsu>	So let's say you wanted ZrnBot to be able to output debug info to a window
-Jan 31 00:50:10 <katsu>	You'd probably give ZrnBot some sort of ILogger on construction
-Jan 31 00:50:19 <katsu>	which would be passed to basically every handler
-Jan 31 00:50:28 <katsu>	and they'd log their execution
-Jan 31 00:50:48 <katsu>	The console implementation would just do a Console.WriteLine
-Jan 31 00:51:05 <katsu>	The MVVM implementation would add the message to some model that the viewmodel would pick up on
-Jan 31 00:51:13 <katsu>	and then the view is updated
-Jan 31 00:51:36 <katsu>	Essentially, don't have /any/ UI concepts at ZrnBot's level
-Jan 31 00:51:48 <katsu>	You don't even have /network/ concepts at ZrnBot's level
-Jan 31 00:52:15 <katsu>	ZrnBot processes data that periodically comes in from somewhere
-Jan 31 00:52:27 <katsu>	and outputs different types of data
-Jan 31 00:52:48 <ZeroOne>	So with a console UI, ZrnBot would hold a reference to an INetwork, but with the GUI, I'd remove that?
-Jan 31 00:53:02 <katsu>	INetwork isn't /networking/
-Jan 31 00:53:11 <katsu>	INetwork is a declaration of an event and a method
-Jan 31 00:53:13 <katsu>	nothing more
-Jan 31 00:53:21 <ZeroOne>	Oh, yes
-Jan 31 00:53:27 <katsu>	networking happens in a concrete implementation
-Jan 31 00:53:30 <ZeroOne>	The actual networking stuff is handled elsewere
-Jan 31 00:53:34 <ZeroOne>	I imagine in a Network class?
-Jan 31 00:53:42 <katsu>	Yeah, you could call it that
-Jan 31 00:53:53 <ZeroOne>	Or possibly Connection class
-Jan 31 00:54:12 <katsu>	My IRC library didn't provide an implementation, which is probably a bad call
-Jan 31 00:54:22 <ZeroOne>	naughty
-Jan 31 00:54:23 <katsu>	You almost always want some basic implementation
-Jan 31 00:54:39 <ZeroOne>	So you have an IConnection, but you don't actually have a Connection class?
-Jan 31 00:54:42 <katsu>	yep
-Jan 31 00:54:58 <katsu>	But the idea was that I was going to intercept commands there and redirect to a bouncer or whatnot
-Jan 31 00:55:39 <katsu>	So essentially the IRC library thinks it is talking to a network, but it's talking to a custom bouncer that may use an entirely different communication protocol
-Jan 31 00:55:50 <ZeroOne>	Ah
-Jan 31 00:56:11 <katsu>	once you've abstracted everything out this far, you can easily add new components without affecting anything else
-Jan 31 00:57:00 <ZeroOne>	Now, the Network class should be the class responsible for using the IMessageFactory to create the IMessage on input, shouldn't it?
-Jan 31 00:58:05 <katsu>	no
-Jan 31 00:58:31 <ZeroOne>	dangit
-Jan 31 00:58:33 <katsu>	the responsibility of INetwork is to send and receive strings from /somewhere/
-Jan 31 00:58:56 <katsu>	The interface doesn't specify that it should care
-Jan 31 00:59:02 <katsu>	It /could/ care
-Jan 31 00:59:05 <KentaKurodani>	if there is a nearby local tourney in florida I'm gonna play smash down there too
-Jan 31 00:59:09 <ZeroOne>	Oh
-Jan 31 00:59:33 <katsu>	The formatting of the data doesn't matter, INetwork doesn't specify
-Jan 31 00:59:42 <ZeroOne>	So Network would take the input and fire the event. The UI would print the raw input to the console, while the Bot class uses its IMessageFactory to create the IMessage
-Jan 31 00:59:43 <katsu>	if you wanted to specify, you'd have used a different type than string
-Jan 31 00:59:55 <ZeroOne>	I think
-Jan 31 01:00:02 <katsu>	So an implementation of Network is just
-Jan 31 01:00:57 <katsu>	(just a possible implementation)
-Jan 31 01:01:07 <katsu>	1. Constructor accepts Uri to remote server
-Jan 31 01:01:39 <katsu>	2. Constructor opens a System.Net.Socket and constructs a System.Net.NetworkStream from that socket
-Jan 31 01:03:53 <katsu>	3. Contains an async method that loops forever (actually isn't forever, checks a cancellation token to determine whether to end the loop), awaiting a ReadAsync call and converting that to a string and firing the event
-Jan 31 01:04:50 <katsu>	4. Contains the async method defined by the interface which will await SendAsync after converting the string to a byte array
-Jan 31 01:05:32 <katsu>	There you go, done
-Jan 31 01:05:42 <katsu>	so what you'd do in your startup
-Jan 31 01:05:49 <ZeroOne>	And I'd actually get a chance to use async
-Jan 31 01:06:40 <katsu>	var cts = new CancellationToken();
-Jan 31 01:06:59 <katsu>	var network = new Network(v"irc.esper.net:6697"), cts.Token);
-Jan 31 01:07:22 <katsu>	var zrnBot = new ZrnBot(network, new MessageFactory());
-Jan 31 01:07:35 <katsu>	network.StartReadAsync();
-Jan 31 01:07:56 <katsu>	// wait until zrnbot is done
-Jan 31 01:08:03 <katsu>	cts.Cancel();
-Jan 31 01:08:07 <katsu>	bam, done
-Jan 31 01:08:38 <ZeroOne>	So network.StartReadAsync(); will just keep it running until I want everything to quit
-Jan 31 01:08:47 <katsu>	yeah, essentially
-Jan 31 01:09:18 <katsu>	PY might know a bit more about that
-Jan 31 01:09:29 <katsu>	There's a bit of black magic going on for the thread pool work
-Jan 31 01:09:39 <ZeroOne>	As always.
-Jan 31 01:10:10 <ZeroOne>	Now I just need to decouple the startup from the UI in such a way that the UI can still subscribe to the network input received event
-Jan 31 01:10:55 <katsu>	simple
-Jan 31 01:11:04 <katsu>	ILogger
-Jan 31 01:11:21 <katsu>	Don't have the UI subscribe to the input received event
-Jan 31 01:12:19 <katsu>	You're essentially using the console to attempt to debug
-Jan 31 01:12:26 <katsu>	That's logging
-Jan 31 01:13:12 <ZeroOne>	So would Logger subscribe to the input event, and then the UI would subscribe to an event defined by ILogger?
-Jan 31 01:13:41 <katsu>	No, you pass the logger to Network on construction
-Jan 31 01:14:02 <katsu>	So let's say for your console application you create a class called
-Jan 31 01:14:09 <katsu>	class ConsoleLogger : ILogger
-Jan 31 01:14:21 <katsu>	where ILogger has the following method
-Jan 31 01:14:56 <katsu>	void Log(string message);
-Jan 31 01:15:04 <katsu>	and the implementation for ConsoleLogger is
-Jan 31 01:15:08 <katsu>	{
-Jan 31 01:15:15 <katsu>	    Console.WriteLine(message);
-Jan 31 01:15:15 <katsu>	}
-Jan 31 01:15:16 <katsu>	done
-Jan 31 01:15:38 <katsu>	Now your Network object is "logging" elements, but it doesn't care to where
-Jan 31 01:15:59 <katsu>	it just happens that ConsoleLogger is outputting to the console window
-Jan 31 01:16:01 <ZeroOne>	So I'd create an instance of ConsoleLogger, then pass it to Network?
-Jan 31 01:16:05 <katsu>	yeah
-Jan 31 01:16:11 <katsu>	so the startup changes slightly
-Jan 31 01:16:18 <katsu>	var logger = new ConsoleLogger();
-Jan 31 01:16:24 <katsu>	var cts = CancellationToken();
-Jan 31 01:16:26 <ZeroOne>	In which case, my ConsoleUI class is now useless
-Jan 31 01:16:44 <katsu>	var network = new Network("", cts.Token, logger);
-Jan 31 01:16:57 <katsu>	var zrnBot = new ZrnBot(network, logger, new MessageFactory());
-Jan 31 01:16:58 <katsu>	and so on
-Jan 31 01:17:24 <katsu>	Well, what does ConsoleUI do?
-Jan 31 01:17:42 <ZeroOne>	https://github.com/Zero-One101/ZrnBot/blob/master/ZrnBot/ConsoleUI.cs
-Jan 31 01:17:43 <OMGbot>	Title: ZrnBot/ConsoleUI.cs at master · Zero-One101/ZrnBot · GitHub (at https://github.com)
-Jan 31 01:18:02 <ZeroOne>	oh, that's outdated
-Jan 31 01:18:12 <katsu>	Ok, so you can also do input via console
-Jan 31 01:18:14 *	fredpmpg (~fredpmpg@24-179-35-212.dhcp.leds.al.charter.com) has joined #sr388
-Jan 31 01:18:15 <katsu>	this gets more complex
-Jan 31 01:18:18 <ZeroOne>	No
-Jan 31 01:18:31 <katsu>	and your ConsoleLogger becomes more modelly
-Jan 31 01:18:34 <ZeroOne>	Console isn't accepting input
-Jan 31 01:19:40 <ZeroOne>	http://pastebin.com/Tuuv51xj
-Jan 31 01:19:41 <OMGbot>	Title: [C#] using System; namespace ZrnBot { class ConsoleUI { public - Pastebin.com (at http://pastebin.com)
-Jan 31 01:20:32 <katsu>	So then what is GetInput? :p
-Jan 31 01:20:35 <ZeroOne>	hang on, i've gone braindead
-Jan 31 01:20:39 <ZeroOne>	Oh, yes
-Jan 31 01:20:46 <ZeroOne>	Yeah, it accepts input for the initial bot setup
-Jan 31 01:21:11 <katsu>	ok, so that should just be part of the initialization phase
-Jan 31 01:21:16 <katsu>	nothing to do with ZrnBot
-Jan 31 01:21:50 <ZeroOne>	I should probably actually push this all to GitHub so you can see what's going on
-Jan 31 01:22:43 <ZeroOne>	Ok, repository is updated
-Jan 31 01:23:21 <ZeroOne>	So Program creates an instance of the UI and calls ui.Run
-Jan 31 01:23:35 <ZeroOne>	That creates a new bot and call its Load method
-Jan 31 01:23:47 <ZeroOne>	If it can find a config, it'll load it. Else, it'll do the setup
-Jan 31 01:24:17 <ZeroOne>	And the setup calls the static methods in ConsoleUI to make it look nice and pretty and formatted.
-Jan 31 01:24:37 <ZeroOne>	Which was my idea of separating the formatting logic from the business logic, until I went and made the ConsoleUI initialise the bot.
-Jan 31 01:25:19 <katsu>	Ok, so InputUtils
-Jan 31 01:25:25 <katsu>	all of that setup
-Jan 31 01:25:28 <katsu>	get that out of the bot
-Jan 31 01:25:35 <katsu>	does not belong there
-Jan 31 01:26:29 <ZeroOne>	That entire class?
-Jan 31 01:26:41 <katsu>	Bot shouldn't be calling anything from InputUtils
-Jan 31 01:26:52 <ZeroOne>	Oh
-Jan 31 01:27:01 <katsu>	and InputUtils itself is a bit worrying 
-Jan 31 01:27:25 <katsu>	Not terrible though
-Jan 31 01:27:39 <katsu>	it's decent encapsulation for the various operations you want to perform
-Jan 31 01:27:50 <ZeroOne>	So where did I go wrong?
-Jan 31 01:27:57 <katsu>	It's the public static nature of that
-Jan 31 01:28:14 <katsu>	Those methods should be private on some Startup class
-Jan 31 01:28:27 <ZeroOne>	Ah
-Jan 31 01:28:42 <ZeroOne>	I'm stuck in the mindset that only objects should be classes.
-Jan 31 01:29:02 <ZeroOne>	if that makes sense
-Jan 31 01:29:18 <katsu>	Yeah, think of classes simply as responsibilities, not objects
-Jan 31 01:29:29 <ZeroOne>	Ah
-Jan 31 01:29:34 <ZeroOne>	That makes sense
-Jan 31 01:29:40 <ZeroOne>	I need a class responsible for the startup
-Jan 31 01:30:06 <katsu>	You have no idea how long it takes for some to pick that up
-Jan 31 01:30:19 <katsu>	OOP can really screw with the developer's mindset if that's all they know
-Jan 31 01:30:44 <ZeroOne>	Sounds like it should be more responsibility-oriented programming
-Jan 31 01:30:48 <katsu>	haha
-Jan 31 01:31:21 <katsu>	Well, object is the "correct" term for it
-Jan 31 01:31:40 <katsu>	but object carries real-world connotations
-Jan 31 01:32:01 <ZeroOne>	So if Bot.Load() can't find a config, it should create an instance of the Startup class and then that'll essentially be the merging of InputUtils and BotSetup
-Jan 31 01:34:15 <katsu>	Yeah, sorta
-Jan 31 01:34:41 <katsu>	So the bot shouldn't load and save its own configs
-Jan 31 01:34:59 <ZeroOne>	I should have a Serialization class to handle that?
-Jan 31 01:35:07 <katsu>	There should be a class responsible for reading and writing that
-Jan 31 01:35:14 <ZeroOne>	ta-daa
-Jan 31 01:35:34 <katsu>	the Startup class would use this to load the bot config, if not found then prompting for bot info
-Jan 31 01:35:45 <katsu>	then generates a Bot from that
-Jan 31 01:36:01 <katsu>	Essentially, your "mess" is in the Startup class
-Jan 31 01:36:17 <katsu>	it is tightly coupled to nearly everything in your program
-Jan 31 01:36:37 <katsu>	but the Startup code is very small
-Jan 31 01:36:51 <katsu>	so it's not a lot of tightly coupled code to maintain
-Jan 31 01:37:35 <katsu>	and in fact, you may not need a separate class for config read/write
-Jan 31 01:37:41 <katsu>	or if you do, it'll be very thin
-Jan 31 01:37:52 <katsu>	just a wrapper around the existing .NET serialization
-Jan 31 01:38:15 <katsu>	It knows about the format of the config file
-Jan 31 01:38:26 <katsu>	and you're basically done
-Jan 31 01:38:43 <ZeroOne>	So would all of the "var cts = new CancellationToken();" stuff go into this Startup class, or is the Startup class just for the bot?
-Jan 31 01:38:45 <katsu>	the Startup class is the one that actually points out what file the config reader/writer should look at
-Jan 31 01:38:54 <katsu>	put that in Startup
-Jan 31 01:39:07 <katsu>	Once you've got it up and working, we can look at splitting that up
-Jan 31 01:39:23 <ZeroOne>	So the Program class is essentially doing var Startup = new Startup();
-Jan 31 01:39:29 <katsu>	yeah, pretty much
-Jan 31 01:39:31 <ZeroOne>	And then everything kicks off from there
-Jan 31 01:39:39 <katsu>	We'll look at splitting it up from there
-Jan 31 01:39:42 <ZeroOne>	Right
-Jan 31 01:40:03 <ZeroOne>	That doesn't sound terribly difficult to refactor. I might do it now
-Jan 31 01:40:07 <katsu>	Startup is a messy thing
-Jan 31 01:40:17 <ZeroOne>	He says, wanting to go to bed about an hour ago :P
-Jan 31 01:40:22 <katsu>	heh
-Jan 31 01:40:55 <katsu>	I shouldn't be busy tomorrow, can probably help out
-Jan 31 01:41:15 <ZeroOne>	Does it matter if I put all the "var cts..." in the constructor if it's just going to be refactored later? Just as a temporary thing?
-Jan 31 01:46:25 <katsu>	The Network constructor needs the cts
-Jan 31 01:46:46 <ZeroOne>	I don't have the Network object written yet :P
-Jan 31 01:47:00 <ZeroOne>	I'm basically refactoring what already exists
-Jan 31 01:47:30 <katsu>	https://msdn.microsoft.com/en-us/library/dd997289(v=vs.110).aspx
-Jan 31 01:47:43 <katsu>	ah, ok
-Jan 31 01:47:49 <katsu>	no need for it yet then
-Jan 31 01:47:50 <ZeroOne>	I think my plan is to decouple the UI from the initialisation, which is what I'm doing, then get the Network class working, then start on that factory pattern for the messages
-Jan 31 01:49:41 <ZeroOne>	I keep forgetting to close my filestreams
-Jan 31 01:51:57 <Silver_Skree>	my brother taught me something good
-Jan 31 01:52:14 <Silver_Skree>	any time you write new, go ahead and write its delete as well
-Jan 31 01:52:18 <Silver_Skree>	then just move it
-Jan 31 01:52:22 <Silver_Skree>	but never get rid of it
-Jan 31 01:52:36 <Silver_Skree>	the same idea can be applied to opening and closing stuff
-Jan 31 01:52:43 <ZeroOne>	Not a bad idea
-Jan 31 01:52:57 <ZeroOne>	Same as pushing and pulling from registers
-Jan 31 01:54:56 <katsu>	See, in C++ I try to follow the RAII principle
-Jan 31 01:55:09 <katsu>	There is a similar concept in C# with IDisposable objects
-Jan 31 01:55:22 <katsu>	Which FileStreams are
-Jan 31 01:55:38 <katsu>	using (var file = new FileStream(new File("file")))
-Jan 31 01:55:39 <katsu>	{
-Jan 31 01:55:47 <katsu>	    file.Write Junk here;
-Jan 31 01:55:48 <ZeroOne>	Oh, of course
-Jan 31 01:55:48 <katsu>	}
-Jan 31 01:55:49 <katsu>	done
-Jan 31 01:56:42 <katsu>	C++ has stack-based object destruction that you can utilize
-Jan 31 01:56:42 <Silver_Skree>	anyway, speaking of my brother
-Jan 31 01:56:50 <Silver_Skree>	DFPercush_: how's Lucia's route going?
-Jan 31 01:57:38 <katsu>	and smart pointers in C++ can give you deterministic reference counting that will call the destructor when count hits zero
-Jan 31 02:01:26 <ZeroOne>	Ok, refactored
-Jan 31 02:01:30 <ZeroOne>	InputUtils now no longer exists
-Jan 31 02:01:39 <ZeroOne>	The Bot class isn't in charge of saving, loading or setup
-Jan 31 02:01:48 <ZeroOne>	There is a BotSerialiser class that deals with saving and loading
-Jan 31 02:02:14 <ZeroOne>	And the Startup class does the bot setup if a FileNotFound exception is thrown on trying to load the bot.
-Jan 31 02:03:14 <katsu>	Ok, I'm out for the rest of the day
-Jan 31 02:03:21 <katsu>	congrats on the refactoring
-Jan 31 02:03:23 <ZeroOne>	Yeah, I think I'm done too :P
+<ZeroOne>	Well, time to create the Message object
+ *	SkreeBot (~SkreeBot@---.dhcp.leds.al.charter.com) has joined #sr
+<SkreeBot>	Command token for this channel is &
+ *	ChanServ sets modes [#sr +o SkreeBot]
+ *	SkreeBot has quit (Read error Connection reset by peer)
+<PY>	you should probably just create whatever channel when you get a message from it
+<Silver_Skree>	I do
+<ZeroOne>	I wonder if I should have message subtypes to identify if it's a server message or not
+<Silver_Skree>	I recently rewrote the section that happens in
+<Silver_Skree>	and forgot to add LBYL
+<PY>	LBYL?
+<Silver_Skree>	Look Before You Leap
+<Silver_Skree>	check if my channel dict has an entry for this channel
+<Silver_Skree>	if not, make one
+<Silver_Skree>	THEN access the dict
+<Silver_Skree>	as opposed to EAFTP
+<Silver_Skree>	Easier to Ask Forgiveness Than Permission
+<Silver_Skree>	try access
+<Silver_Skree>	on KeyError, make entry
+<PY>	yes, I'm aware of the terms v
+<Silver_Skree>	yeah, I think you taught them to me
+<Silver_Skree>	was wondering why you asked
+<PY>	didn't immediately grok the acronym
+<ZeroOne>	I love how I can never remember how to write enums
+<Silver_Skree>	why is the chanObj for the query None
+<Silver_Skree>	what the fuck
+<Silver_Skree>	oh wait
+<Silver_Skree>	no I know
+<Silver_Skree>	I'm relating the line to its channel object inside of the network object
+<Silver_Skree>	but when a line's channel string isn't in the network object's channel dictionary keys, I disregard it
+<Silver_Skree>	I'm not sure why
+<ZeroOne>	I love me some ReSharper.
+<Silver_Skree>	the big advantage ZeroOne has over me is the ability to set up a real debug environment and step through operations and view memory >_>
+ *	Silver_Skree misses these things
+<ZeroOne>	Yeah, and I don't even have to connect to IRC to test things.
+<PY>	you could use a python debugger, skree<.<
+<Silver_Skree>	you've already got your mock network set up?
+<ZeroOne>	Not yet
+<ZeroOne>	I'm currently writing the Message object
+<Silver_Skree>	of course, my advantage is my abundance of free time 
+<ZeroOne>	I don't have to do shit until next Friday P
+<Silver_Skree>	BOT RAAAAAAAACE
+<ZeroOne>	Your advantage is you actually work on it.
+<Silver_Skree>	I started two days ago
+<Silver_Skree>	don't count me in for the long run yet
+<ZeroOne>	Heh
+<ZeroOne>	You also have the benefit of knowing Python better than I do
+<Silver_Skree>	but still, only two days and I'm this far along
+<ZeroOne>	My core is C#, but most of my functionality will end up being Python scripts
+<Silver_Skree>	despite some of the less tasteful practices, this is the most productive I've been with code since I wrote my dumb little slideshow program
+<ZeroOne>	Whoa. Last time I worked on ZrnBot was  days ago
+<Silver_Skree>	even Simplex wasn't cranked out this fast at first
+<ZeroOne>	And that was just adding save/load functionality
+<Silver_Skree>	I still need to add that
+<Silver_Skree>	I'm not logging and there's no config
+<Silver_Skree>	but right now I'm sidetracked on not making him crash on CTCP
+<ZeroOne>	[Serializable] make it really trivial in C#
+<ZeroOne>	makes*
+<Silver_Skree>	presumably he would have also crashed on query
+<Silver_Skree>	just, nobody queried him
+<Silver_Skree>	also, I want to try something
+ *	Silver_Skree test
+<ZeroOne>	Ok, time to parse the incoming message and split it up into all of its components
+<Silver_Skree>	aw
+<Silver_Skree>	gotta love that non-linear development
+<ZeroOne>	Jumping around the various tasks you need to do and hope it all comes together?
+<Silver_Skree>	hehe
+<ZeroOne>	I should've actually made a diagram of this. Some sort of documentation.
+<Silver_Skree>	what I meant is that I just hurried into connecting to IRC, responding to pings, and joining channels
+<Silver_Skree>	and then polished from there
+<ZeroOne>	Ah
+<ZeroOne>	Yep, that was my first bot.
+<Silver_Skree>	you seem to have handled saving, loading, etc. first
+<ZeroOne>	My first bot was also made in entirely two classes.
+<Silver_Skree>	heh
+<ZeroOne>	I think the save thing was just me being lazy. Doing that means I don't have to input all of the same connection details every time, or hardcode it.
+<ZeroOne>	Instead, "oh look, it's a file. Let's cast it to a Bot object."
+<ZeroOne>	boom, done
+<Silver_Skree>	in other news, this Beloved Tomboyish Daughter arrangement sounds a bit like Stickerbush Symphony, actually
+<Silver_Skree>	weird
+<ZeroOne>	...maybe a ServerMessage subtype wouldn't be a bad idea
+<ZeroOne>	Python can check what type something is, right? Like if (input is type)?
+<PY>	yes, of course
+<ZeroOne>	type(input) is ServerMessage
+<ZeroOne>	This requires some consideration
+<ZeroOne>	It also requires access to a lot of the data that the Bot class stores. I could either pass the Bot to the Message constructor, or only the information the Message needs (control char, server name, bot name)
+<PY>	why does your message type need to know about your bot?
+<ZeroOne>	It doesn't
+<ZeroOne>	It only really needs to know those things I listed
+<PY>	why does it need to know those?
+<ZeroOne>	The control char to determine if it's a command, the server to determine if it's a server message, and the bot name to determine if it's a query
+<PY>	perhaps the message type shouldn't also be responsible for doing that sort of parsing?
+<ZeroOne>	It shouldn't?
+ *	KentaTworodani has quit (Ping timeout  seconds)
+<PY>	it's often worth restructuring things so that things don't need to know about other things!
+<ZeroOne>	This is true
+<ZeroOne>	If I push this to GitHub, could you have a look at it and suggest things?
+<PY>	am a little busy right now, unforortunately (
+<ZeroOne>	sadface
+<ZeroOne>	ok
+<ZeroOne>	Think it's worth getting rid of the namespaces I'm not using?
+<PY>	if you aren't using them!
+<ZeroOne>	Whee
+<ZeroOne>	I am mostly namespaceless.
+<ZeroOne>	% of my files now no longer have any namespaces.
+<PY>	in c#?
+<ZeroOne>	Yeah
+<PY>	literally did not realise you could do that
+<PY>	not sure why you would x
+<ZeroOne>	Well, you said "if you aren't using them!"
+<Silver_Skree>	mmmmmm chocolate mint cookies
+<PY>	I thought you meant they were empty!
+<ZeroOne>	And according to ReSharper, half the time I wasn't even using the System namespace
+<PY>	/oh/
+<ZeroOne>	The using statements
+<PY>	importing namespaces, right.
+<ZeroOne>	Those namespaces
+<PY>	yeah
+<PY>	get rid of those v
+<PY>	I thought you meant for your own code
+<ZeroOne>	I don't have a ZrnBot.whatever namespace
+<ZeroOne>	I am not yet pro enough for that
+<PY>	you should make one
+<ZeroOne>	Hmm. I haven't properly considered where my Network object would go in relation to everything else
+<PY>	is this for your mock?
+<ZeroOne>	Or rather the IO object
+<Silver_Skree>	okay, after spacing out and eating cookies for  minutes, SkreeBot no longer crashes on query.
+<ZeroOne>	In general. Mock IO and actual IRC IO
+<PY>	Zrnbot.IO would make sense. INetwork and IRCNetwork in Zrnbot.IO, MockNetwork in Zrnbot.Test.IO
+<ZeroOne>	Oh boy, subnamespaces!
+<ZeroOne>	...that's not the technical term, is it?
+<PY>	they're just namespaces
+<ZeroOne>	Ah
+<ZeroOne>	But I'm also talking about the path an input takes through my code
+<ZeroOne>	Program instantiates ConsoleUI, which instantiates the Bot
+<ZeroOne>	I get an input through the IO object
+<PY>	you generally want to be able to inject things you want to be able to mock
+<ZeroOne>	Dependency injection
+<PY>	yeah
+<PY>	simplest method is just taking an INetwork in the ctor
+<ZeroOne>	Now, I want to pass this input to my UI so it can be displayed
+<PY>	define input here
+<ZeroOne>	I also want to pass it to my Bot so it can be converted into a Message and then acted upon
+<ZeroOne>	Either mock or IRC message
+<ZeroOne>	Server or user
+<PY>	right
+<PY>	how do you think INetwork could look?
+<ZeroOne>	Remind me of what I can define in an interface
+<ZeroOne>	I keep getting interfaces and abstract classes confused
+<PY>	properties, methods, events, I think delegates
+<ZeroOne>	Well, it'd probably want InStream and OutStream properties, to send and receive data
+<PY>	Possibly, but will that let you do what you want?
+<ZeroOne>	What I want is to pass the relevant information to my UI and my Bot, right?
+<PY>	right
+<ZeroOne>	So it'd probably also want to hold a reference to the UI and the bot
+<ZeroOne>	But no
+<ZeroOne>	It doesn't need to know about those things, right?
+<PY>	the best design might actually know about those things, just not specifically what they are
+<ZeroOne>	How does that work?
+<PY>	I'm mostly thinking of using events, which I'm not sure you've covered before?
+<ZeroOne>	I've done events in my Mario engine
+<ZeroOne>	Haven't applied it to non-game things, but I imagine it's the same
+<PY>	oh, goodie
+<PY>	can you see how it could apply here?
+<ZeroOne>	When IRCNetwork receives an input, it fires off an event that both the ConsoleUI and the Bot are subscribed to
+<PY>	right!
+<ZeroOne>	Or perhaps separate events
+<PY>	what for?
+<ZeroOne>	It doesn't matter, does it
+<PY>	I dunno what you want them for
+<ZeroOne>	Well the UI needs the message to display it to the console
+<ZeroOne>	The bot needs it to create the Message object and then do stuff with it
+<ZeroOne>	But they both act on receiving a message
+<ZeroOne>	So the same event should work
+<PY>	yep
+<ZeroOne>	It'd have two subscribers
+<PY>	or however many!
+<ZeroOne>	Right
+<ZeroOne>	Amusingly, while all of this solves a lot of problems, it doesn't solve the original question. What should actually parse the message, if not the Message object
+<ZeroOne>	IRCNetwork shouldn't do it.
+<ZeroOne>	Maybe Bot
+<PY>	maybe. You could do multi-pass? Give the IRCNetwork an IRCMessageParser that knows how to turn messages into naive IRCMessages
+<PY>	then the bot can inform further categorisation
+<ZeroOne>	So IRCNetwork receives an input
+<ZeroOne>	It then passes it to IRCMessageParse that returns an IRCMessage
+<ZeroOne>	THEN it fires the event that both UI and Bot are subscribed to
+<PY>	sounds like it could work!
+<ZeroOne>	And then Bot could take it further and say "Ok, this is a ServerMessage" or "Ok, this is a UserMessage"
+ *	MenTaLguY has quit (Ping timeout  seconds)
+<PY>	right, the bot needs to be responsible for routing 
+<ZeroOne>	Now, IRCMessage wouldn't simply be the raw input, but it /could/ contain it
+<PY>	there's a lot of structure you can give just an irc message
+<ZeroOne>	True, but I also have to keep it quite generic. I should only use the things common to ALL IRC messages, server and user
+<PY>	right, but that's still a lot
+<ZeroOne>	Also, I like how you're busy, but you're still helping
+<PY>	I can do some degree of multitasking!
+<ZeroOne>	Hahaha
+<ZeroOne>	Py.HelpThread
+<ZeroOne>	Py.WorkThread is await
+<ZeroOne>	"Namespace does not correspon to file location, should be 'ZrnBot'"
+<ZeroOne>	I take it ReSharper is suggesting I have an IO folder inside my ZrnBot folder
+<PY>	yeah
+<ZeroOne>	Ah.
+<ZeroOne>	And, of course, Io*
+...
+<katsu>	Also, about the namespaces
+<katsu>	ZrnBot.IO is correct
+<ZeroOne>	Oh
+<katsu>	ZrnBot.Io is not
+<katsu>	acronyms less than three characters are kept all caps
+<ZeroOne>	Ah, ok
+<katsu>	See System.IO
+<katsu>	Now the shitty thing is if you have a two letter acronym followed by a word
+<katsu>	IOHandler
+<katsu>	that's the proper name
+<katsu>	but it might look a bit odd
+...
+<katsu>	For the IRC library I had been working on, I completely abstracted out the network IO
+<katsu>	https//github.com/nehresmann/Nyaxix.Irc/blob/master/Nyaxix.Irc/IConnection.cs
+<katsu>	Literally just an event that would fire when stuff comes in and a function to call to send stuff out
+<ZeroOne>	Ah
+<katsu>	but that was generic IRC library
+<katsu>	Also, the rest of that code is old
+...
+<ZeroOne>	...this doesn't seem like it should work
+<ZeroOne>	"public IrcMessage IrcMessage"
+<ZeroOne>	And yet, neither ReSharper or VS is telling me off.
+<katsu>	Nope, it can determine type vs identifier based on the grammar
+<ZeroOne>	Yeah, I just realised I'd be accessing that by doing something like event.IrcMessage
+<ZeroOne>	IrcMessage is clearly not a class in this case
+<katsu>	It could become dicy if you had a static property called IrcMessage and also an internal class called IrcMessage, but even then the parser can figure it out
+<ZeroOne>	I think at that point, I might want to consider renaming a couple of things
+<ZeroOne>	Should my INetwork have properties for an input stream and an output stream, or would I just be sending and receiving through the same stream here? NetworkStream, I imagine
+<PY>	you're probably thinking too low level
+<PY>	you want to distribute one stream across n clients, you can't expose the raw stream
+<PY>	otherwise you'll get the UI picking up one message and the bot picking up another, and never the twain shall meet
+<ZeroOne>	So this interface would provide methods for sending and receiving, but the ACTUAL stream stuff is done elsewhere?
+<katsu>	So my setup was an IConnection
+<katsu>	It states that an event is fired when data comes in, providing a string of the data
+<PY>	katsu's setup is basically what I was going to try and lead you towards
+<katsu>	and allows data to be sent out, as a string
+<katsu>	You'd have one IConnection per IRC network you're connected to
+<PY>	you need something on that level of abstraction, you can't think in streams if you want to split it like that
+<katsu>	You could possibly aggregate all of them into a single interface though
+<katsu>	Could possibly be useful, but I'd rather aggregate as another layer
+<ZeroOne>	So how should I do this
+<ZeroOne>	I'm guessing my INetwork interface would essentially be your IConnection interface
+<katsu>	So yeah, I'll try to explain the abstractions I was thinking of
+<katsu>	At the lowest level, you've got the network io
+<katsu>	but IRC shouldn't have to care about that
+<katsu>	So what does it need?
+<katsu>	It needs to know when a message is received
+<katsu>	and it needs to be able to send data
+<katsu>	It doesn't care how
+<ZeroOne>	For which I have a MessageReceivedEventArgs
+<katsu>	the second thing is that IRC is all string-based communication
+<katsu>	So you don't need the complexities of having to send byte arrays and whatnot
+<katsu>	From that information, you have an event and a method
+<katsu>	I've tacked on a bit more info because of multi-network stuff
+<katsu>	but for now ignore that
+<katsu>	the Url and Server is not important
+<ZeroOne>	brb, dad wants me. Keep talking, I'll catch up
+<katsu>	Now, once you have that, you need something to receive messages and handle the messages that arrive
+<katsu>	and by handle messages, this may involve sending responses
+<katsu>	This becomes more complex, because "handling" a "message" is not trivial
+<katsu>	what is a message?
+<katsu>	we need to make it simpler
+<katsu>	A message needs to be defined
+<katsu>	So in my method, I went type crazy
+<katsu>	definitely not a requirement
+<katsu>	you can go much simpler and move some of that logic over to the handlers
+<katsu>	but that's getting ahead of myself
+<katsu>	This is where we get into IRC RFC
+<katsu>	You need something to abstract that
+<katsu>	the format of an IRC message
+<katsu>	break it down into components
+<PY>	here comes the regex
+<katsu>	IRC RFC defines these things as the message prefix, message command, and message parameters (with a special case for the trailing parameter)
+<katsu>	and the prefix is further defined
+<katsu>	So I created two classes
+<katsu>	Message and Prefix
+<katsu>	These could be structs
+<katsu>	they simply contain data and some light logic to reformat themselves for output
+<katsu>	keep in mind that object construction is always best left to factory classes
+<katsu>	Message and Prefix contain the data we want out of an irc message
+<katsu>	and we have a MessageFactory to build Messages
+<katsu>	(please keep in mind you also want an interface for MessageFactory for unit testing purposes)
+<katsu>	You don't necessarily need interfaces for Message and Prefix
+<katsu>	you could treat them like primitives
+<katsu>	just don't start putting super complex logic in them
+<katsu>	If they're primitives, then keep them that way
+<katsu>	Also PY, I'll skip the regex, that's implementation detail, not design
+<PY>	haha
+<katsu>	So once you've got a MessageFactory to provide you with Message objects from the strings received from an IConnection, you can begin to work with them
+<katsu>	I went further and built ICommand objects from those, but that may not be desirable
+<katsu>	that's a lot of types
+<katsu>	so I'll skip that for now
+<katsu>	These messages are all handled differently based on what they are
+<katsu>	PING messages need a PONG message response generated and sent out
+<katsu>	when you join a channel, you'll get NAMES messages
+<katsu>	and so on
+ *	KentaTworodani (~Kenta-PC@---.res.bhn.net) has joined #sr
+ *	ChanServ sets modes [#sr +o KentaTworodani]
+<katsu>	Just like we don't want to know how to create a Message from a raw irc string in this class (for now we'll call it the IrcClient), we don't want to know about how a message is handled
+<katsu>	There are many, many IRC commands
+<katsu>	and we may want to be able to tackle them in one or more handlers so we can separate concerns
+<katsu>	This is the chain of responsibility pattern
+<ZeroOne>	I quite like the idea of Message and Prefix classes/structs
+<ZeroOne>	It'd give me some experience with the Factory pattern
+<katsu>	I'll give you some help with the factory pattern
+<katsu>	Wtih MessageFactory, you're gonna want a simple interface
+<katsu>	With, even
+<ZeroOne>	Much appreciated
+<katsu>	Message BuildMessage(string ircMessage);
+<PY>	like many patterns, the factory pattern is an amazingly simple concept
+<katsu>	my bad, let me give you the whole interface
+<katsu>	interface IMessageFactory
+<katsu>	{
+<katsu>	    Message BuildMessage(string ircMessage);
+<katsu>	}
+<katsu>	there you go
+<ZeroOne>	Hahaha
+<PY>	that literally is all it is
+<ZeroOne>	Is that literally the Factory pattern?
+<ZeroOne>	Wow
+<PY>	yes
+<ZeroOne>	That's nothing
+<katsu>	but so powerful
+<PY>	and for all that you get a lot of desirable behaviour
+<ZeroOne>	why hasn't this been covered in uni argh
+<katsu>	I'll actually make one change and you'll see why it is incredbily powerful
+<katsu>	interface IMessageFactory
+<katsu>	{
+<katsu>	    IMessage BuildMessage(string ircMessage);
+<katsu>	}
+<katsu>	Now you have a factory that returns an /interface/
+<katsu>	This is where factories truly become powerful
+<PY>	even better, a factory /interface/ that returns an interface
+<PY>	if you have an IMessageFactory you can have no goddamn idea how it does what it does, and that's super neat
+<katsu>	Yes, so you can mock your factory in unit tests to return a mock message
+<ZeroOne>	That is absolutely ridiculous
+<ZeroOne>	I love it
+<katsu>	For the Message, where it's almost a primitive, the factory is only marginally useful
+<ZeroOne>	There's a lot of information being thrown at me here and I'm not sure where to start. I'm fairly certain my bot already needs a good deal of refactoring
+<katsu>	for the part where I created a billion IRC command types, it became insanely useful
+<katsu>	interface ICommandFactory
+<katsu>	{
+<katsu>	    ICommand BuildCommand(IMessage message);
+<katsu>	}
+<katsu>	So now your factory interface has a method that takes an interface and returns an interface
+<ZeroOne>	So factories are exceptionally good at cranking out a lot of the same type
+<katsu>	So I'll draw it out right now
+<PY>	factories are good when you need to abstract the details of how you actually make something. Whether because how you do that is complex, because you need to be able to test what happens to what it produces, or whatever, the core point of a factory is that it abstracts away that new
+<ZeroOne>	Ooh, so anything that implements ICommandFactory will be able to call BuildCommand and pass it anything that implements the IMessage interface
+<ZeroOne>	And BuildCommand will do whatever that specific class requires it to do
+<PY>	anything which /has/ something that implements ICommandFactory
+<katsu>	Working on a diagram
+<PY>	in katsu's case, his primary implementation is going to abstract away all the nasty routing involved in turning an IRC message into an IRC command
+<PY>	that logic isn't something you want everyone to have to know about
+<PY>	it may be logic which changes depending on who's calling it
+<PY>	it's certainly logic that you might need to test
+<katsu>	Right, but in my system there's a nasty issue where the handler still needs to know the actual ICommand type
+<katsu>	It's not perfect, but it works
+<katsu>	It boils down to a handler doing
+<katsu>	var ping = command as Ping;
+<katsu>	if (ping != null)
+<katsu>	{ /* do things */ }
+<ZeroOne>	BTW, unrelated, but in my Mario engine, I'm having Mario checking the type of whatever he collided with to determine how he should react. Can this be better written using the visitor pattern?
+<katsu>	Here we go
+<katsu>	https//dl.dropboxusercontent.com/u//irc/interface_overview.png
+<ZeroOne>	fancy
+<katsu>	Notice something interesting
+<ZeroOne>	IMessage is at the centre of it all?
+<katsu>	The only thing that relies on a concrete class is the factory
+<ZeroOne>	The concrete class being the IrcClient?
+<katsu>	IrcClient is a concrete class
+<katsu>	but it only relies on interfaces
+<ZeroOne>	Oh, yes
+<katsu>	IConnection, IMessageFactory, IMessage, and IMessageHandler
+<ZeroOne>	Message is the concrete class
+<katsu>	also, I did make a mistake in the diagram
+<ZeroOne>	*gasp*
+<katsu>	I forgot that IMessageFactory doesn't rely on Message
+<ZeroOne>	faaaaart
+<ZeroOne>	Should I just ignore that line?
+<katsu>	There should be a class called MessageFactory, which relies on IMessageFactory, IMessage, and Message
+<katsu>	Updated, refresh
+<katsu>	anyways, that's the basic idea
+<ZeroOne>	So MessageFactory holds a reference to Message, IMessageFactory and IMessage?
+<katsu>	MessageFactory implements IMessageFactory
+<katsu>	IMessageFactory declares a method that returns IMessage
+<katsu>	so by implementing IMessageFactory, MessageFactory also relies on the IMessage interface
+<katsu>	MessageFactory builds an instance of Message and returns that
+<ZeroOne>	Right
+<katsu>	So by building an instance of Message, it has to rely on it too
+<katsu>	and by rely, I mean it is "coupled" to its implementation
+<katsu>	well, its interface
+<katsu>	If the Message constructor changed, MessageFactory has to change to adapt
+<katsu>	but anything relying on IMessage won't have to change
+<katsu>	So IrcClient, for instance
+<katsu>	If you change Message, IrcClient doesn't have to change
+<katsu>	Those two components observe loose coupling
+<katsu>	IrcClient and MessageFactory are also loosely coupled
+<ZeroOne>	So I'm looking to implement this sort of thing in my bot
+<katsu>	Yeah
+<katsu>	The key is to know where to break down a problem into pieces and abstract those pieces away
+<katsu>	So we have the IrcClient
+<katsu>	What are its responsibilities?
+<katsu>	at a high level, it receives messages and handles them
+<katsu>	good, stop there
+<katsu>	that's what IrcClient does
+<katsu>	How does IrcClient do those things?
+<katsu>	those are new interfaces that it uses
+<katsu>	Designing your application in this way puts all of the tight coupling in two distinct places
+<katsu>	. In the factory classes
+<katsu>	. In the application start method
+<katsu>	and there are a lot of crazy tools to remove the second one
+<katsu>	but I won't get into that
+<katsu>	If you've designed your application like this, you can do that later
+<ZeroOne>	Haha. Yeah, this stuff is complex enough as it is P
+<katsu>	You go down this road far enough, you may need a FactoryFactory
+<katsu>	Not for this application specifically
+<ZeroOne>	A factory that creates factories
+<katsu>	an IRC client probably isn't complex enough for that
+<ZeroOne>	I'm giggling, honestly.
+<katsu>	I usually call those providers
+<katsu>	but that's me
+<ZeroOne>	But they're essentially the same?
+<katsu>	yeah
+<katsu>	they're a factory that creates factories
+<katsu>	This one isn't really a factory
+<katsu>	but an example
+<katsu>	https//github.com/nehresmann/Nyaxix.Serialization/blob/master/Nyaxix.Serialization/SerializationFactoryProvider.cs
+<katsu>	This holds instances of factories, it doesn't build them
+<katsu>	I did forget the where clause on the generics though
+<katsu>	should have included
+<katsu>	"where T  ISerializationFactory"
+ *	Black_Falcon has quit (Quit Connection reset by beer.)
+<ZeroOne>	fucker that's my quit message
+<ZeroOne>	Oh, no it's not.
+<ZeroOne>	never mind.
+<katsu>	err, not quite
+<katsu>	I mean
+<katsu>	I think that is defined correctly
+<katsu>	it's been a while
+<katsu>	T was the type of object to serialize/deserialize
+<katsu>	which could be anything
+<katsu>	I enforced what could be sent via the method parameter
+<katsu>	ISerializationFactory<T>
+<ZeroOne>	So it's a way for serialising/deserialising damn near anything
+<ZeroOne>	But, generically
+<katsu>	meeting time
+<katsu>	and yes
+<ZeroOne>	dangit
+<ZeroOne>	Have fun in the meeting
+<ZeroOne>	I need to consider what I'm going to need to refactor here
+<katsu>	You just have to define an ISerializationFactory<T> object for some type T, then give it to this provider
+<ZeroOne>	Which is probably everything
+<katsu>	and then pass the provider to the serialization or deserialization process
+<katsu>	You can look at that entire project to see how it works
+<katsu>	https//github.com/nehresmann/Nyaxix.Serialization/tree/master/Test.Nyaxix.Serialization
+<ZeroOne>	True, but I learn far better by doing it as opposed to reading it
+<katsu>	look at the test to see how it is used
+<ZeroOne>	Which always has me in the loop of "If I do it, I'll learn it, but to do it, I need to learn how to do it"
+<katsu>	heh
+<katsu>	anyways, back in a bit
+<ZeroOne>	hence why I'm usually pestering PY for a line-by-line set of instructions P
+<ZeroOne>	I'm gonna read back from the top. Might make what I need to do a little clearer
+<ZeroOne>	yep, that's a lot of stuff
+<Silver_Skree>	aw come on
+<Silver_Skree>	plex plz
+<Silver_Skree>	I had to leave off in the middle of an episode
+<Silver_Skree>	now it's just hanging up and not doing anything when I ask it to resume
+<Silver_Skree>	arrrgh
+<Silver_Skree>	and when I play from beginning and try to just seek there it exits out of playing
+<Silver_Skree>	|
+ *	Silver_Skree tries web client
+ *	Silver_Skree gets beginning of episode anyway
+<Silver_Skree>	fuck it, I'll watch from the beginning again.
+<Silver_Skree>	grr.
+<ZeroOne>	Oh, let's see if I can get this
+<ZeroOne>	ZrnBot receives some string from the IRC server
+<Silver_Skree>	IRC is amazing.
+<ZeroOne>	The class that receives it calls a method within MethodFactory
+<ZeroOne>	MessageFactory*
+<Silver_Skree>	it's so oooold
+<Silver_Skree>	and yet
+<ZeroOne>	MessageFactory implements the IMessageFactory interface which defines a method that returns an IMessage
+<Silver_Skree>	here we are writing clients for it
+<ZeroOne>	Message implements IMessage
+<ZeroOne>	So ZrnBot is receiving an input and is using the MessageFactory to create a Message object from that input?
+<katsu>	Also, zrn, you've pretty much got it
+ *	ZeroOne success
+<katsu>	I say pretty much because remember that ZrnBot is using interfaces
+<katsu>	<ZeroOne> So ZrnBot is receiving an input and is using the MessageFactory to create a Message object from that input?
+<katsu>	changed to
+<katsu>	<ZeroOne> So ZrnBot is receiving an input from INetwork and is using the IMessageFactory to create an IMessage object from that input?
+<katsu>	So when you construct ZrnBot, it needs two things here
+<katsu>	ZrnBot(INetwork network, IMessageFactory messageFactory)
+<katsu>	Doing it like that allows ZrnBot to use any INetwork or any IMessageFactory
+<katsu>	which
+<katsu>	. Enables freedom to swap internal implementations without modifying ZrnBot
+<ZeroOne>	That seems like a step towards connecting to multiple networks
+<katsu>	. Allows easy testing of the ZrnBot class
+<katsu>	So to connect to multiple networks, you have to add a few different things
+<katsu>	depending on what kind of interaction you want between networks
+<ZeroOne>	zero
+<katsu>	Then it is fairly trivial
+<katsu>	have multiple ZrnBots
+<ZeroOne>	Yeah, I figured
+<ZeroOne>	I think what I'll do is, sometime today (i.e., after I've gone to bed and woken up), I'll figure out what the Network class actually needs, given I've been told that I've been thinking too low-level with streams
+<ZeroOne>	I mean, I imagine I'll need streams eventually
+<katsu>	That's going to be in the implementation of INetwork
+<katsu>	the interface just needs an event and a method
+<katsu>	event is fired on recieving a message
+<ZeroOne>	Which I've already written
+<ZeroOne>	The event, that is
+<katsu>	method sends a string to the server
+<katsu>	That's it, interface is done
+<ZeroOne>	Whee
+<katsu>	Now an implementation, that's where it gets interesting
+<katsu>	For testing, you can make a fake INetwork implementation that fires events and checks what ZrnBot sends without touching the network
+<katsu>	For the implementation, you'd make a class that takes a uri and establishes a connection to it
+ *	KentaTworodani has quit (Ping timeout  seconds)
+<katsu>	likely using a System.Net.NetworkStream
+<ZeroOne>	Ah, the Bot class is going to hold a reference to an INetwork, which will allow it to subscribe to the "input received" event
+<ZeroOne>	But what about the UI?
+<katsu>	yeah
+<ZeroOne>	Oh, never mind
+<ZeroOne>	The way I currently have it, the UI instantiates the Bot class.
+<ZeroOne>	Possibly not what it should be doing, but that'd certainly make it able to subscribe
+<TheFleetingDuck>	going to bed. night aLL
+<ZeroOne>	Night
+<ZeroOne>	I'll be off soon too
+ *	TheFleetingDuck has quit (Quit Leaving)
+<katsu>	So, for the UI, that becomes a completely different thing
+<katsu>	That should follow MVVM
+<katsu>	Model View ViewModel
+<katsu>	Where ZrnBot is a Model
+<katsu>	Or may just be one part of some model class
+<ZeroOne>	But I do definitely need to separate the UI from the bot initialisation
+ *	KentaKurodani (~Kenta-PC@---.res.bhn.net) has joined #sr
+ *	ChanServ sets modes [#sr +o KentaKurodani]
+<Silver_Skree>	wait, GUI, or are we talking about a console that uses MVVM?
+<ZeroOne>	Console
+<Silver_Skree>	heh
+<Silver_Skree>	okay then
+<katsu>	Ah, that's probably simpler
+<katsu>	MVVM may be a bit much
+<ZeroOne>	But, if I write it correctly (possible an IUserInterface), I probably could quite easily swap it out with an actual GUI
+<Silver_Skree>	I was gonna say
+<Silver_Skree>	it's not like you can't do MVVM with a console
+<katsu>	Well, you see, with MVVM, you'd not have ZrnBot know about any UI
+<katsu>	ZrnBot would just mess with data
+<katsu>	and only data
+<katsu>	The ViewModel would observe the data ZrnBot is changing and notify the View
+<katsu>	let me rephrase that
+<katsu>	The ViewModel would observe and transform the data ZrnBot is changing and notify the View
+<ZeroOne>	Uni had an app where it had a ConsoleUI that implemented IUserInterface. It was written to the point where they could just swap in a proper WinForms UI and implement the same interface
+<ZeroOne>	But I don't think it was MVVM
+<katsu>	It most certainly was not
+<katsu>	a model relies on nothing but other models
+<katsu>	viewmodels rely on models
+<ZeroOne>	Ah, so if I wanted to remove the Console UI and replace it with WinForms/WPF, I'd need to make it MVVM
+<katsu>	and views are (in WPF) loosely connected to viewmodels
+<katsu>	So let's say you wanted ZrnBot to be able to output debug info to a window
+<katsu>	You'd probably give ZrnBot some sort of ILogger on construction
+<katsu>	which would be passed to basically every handler
+<katsu>	and they'd log their execution
+<katsu>	The console implementation would just do a Console.WriteLine
+<katsu>	The MVVM implementation would add the message to some model that the viewmodel would pick up on
+<katsu>	and then the view is updated
+<katsu>	Essentially, don't have /any/ UI concepts at ZrnBot's level
+<katsu>	You don't even have /network/ concepts at ZrnBot's level
+<katsu>	ZrnBot processes data that periodically comes in from somewhere
+<katsu>	and outputs different types of data
+<ZeroOne>	So with a console UI, ZrnBot would hold a reference to an INetwork, but with the GUI, I'd remove that?
+<katsu>	INetwork isn't /networking/
+<katsu>	INetwork is a declaration of an event and a method
+<katsu>	nothing more
+<ZeroOne>	Oh, yes
+<katsu>	networking happens in a concrete implementation
+<ZeroOne>	The actual networking stuff is handled elsewere
+<ZeroOne>	I imagine in a Network class?
+<katsu>	Yeah, you could call it that
+<ZeroOne>	Or possibly Connection class
+<katsu>	My IRC library didn't provide an implementation, which is probably a bad call
+<ZeroOne>	naughty
+<katsu>	You almost always want some basic implementation
+<ZeroOne>	So you have an IConnection, but you don't actually have a Connection class?
+<katsu>	yep
+<katsu>	But the idea was that I was going to intercept commands there and redirect to a bouncer or whatnot
+<katsu>	So essentially the IRC library thinks it is talking to a network, but it's talking to a custom bouncer that may use an entirely different communication protocol
+<ZeroOne>	Ah
+<katsu>	once you've abstracted everything out this far, you can easily add new components without affecting anything else
+<ZeroOne>	Now, the Network class should be the class responsible for using the IMessageFactory to create the IMessage on input, shouldn't it?
+<katsu>	no
+<ZeroOne>	dangit
+<katsu>	the responsibility of INetwork is to send and receive strings from /somewhere/
+<katsu>	The interface doesn't specify that it should care
+<katsu>	It /could/ care
+<KentaKurodani>	if there is a nearby local tourney in florida I'm gonna play smash down there too
+<ZeroOne>	Oh
+<katsu>	The formatting of the data doesn't matter, INetwork doesn't specify
+<ZeroOne>	So Network would take the input and fire the event. The UI would print the raw input to the console, while the Bot class uses its IMessageFactory to create the IMessage
+<katsu>	if you wanted to specify, you'd have used a different type than string
+<ZeroOne>	I think
+<katsu>	So an implementation of Network is just
+<katsu>	(just a possible implementation)
+<katsu>	. Constructor accepts Uri to remote server
+<katsu>	. Constructor opens a System.Net.Socket and constructs a System.Net.NetworkStream from that socket
+<katsu>	. Contains an async method that loops forever (actually isn't forever, checks a cancellation token to determine whether to end the loop), awaiting a ReadAsync call and converting that to a string and firing the event
+<katsu>	. Contains the async method defined by the interface which will await SendAsync after converting the string to a byte array
+<katsu>	There you go, done
+<katsu>	so what you'd do in your startup
+<ZeroOne>	And I'd actually get a chance to use async
+<katsu>	var cts = new CancellationToken();
+<katsu>	var network = new Network(v"irc.esper.net"), cts.Token);
+<katsu>	var zrnBot = new ZrnBot(network, new MessageFactory());
+<katsu>	network.StartReadAsync();
+<katsu>	// wait until zrnbot is done
+<katsu>	cts.Cancel();
+<katsu>	bam, done
+<ZeroOne>	So network.StartReadAsync(); will just keep it running until I want everything to quit
+<katsu>	yeah, essentially
+<katsu>	PY might know a bit more about that
+<katsu>	There's a bit of black magic going on for the thread pool work
+<ZeroOne>	As always.
+<ZeroOne>	Now I just need to decouple the startup from the UI in such a way that the UI can still subscribe to the network input received event
+<katsu>	simple
+<katsu>	ILogger
+<katsu>	Don't have the UI subscribe to the input received event
+<katsu>	You're essentially using the console to attempt to debug
+<katsu>	That's logging
+<ZeroOne>	So would Logger subscribe to the input event, and then the UI would subscribe to an event defined by ILogger?
+<katsu>	No, you pass the logger to Network on construction
+<katsu>	So let's say for your console application you create a class called
+<katsu>	class ConsoleLogger  ILogger
+<katsu>	where ILogger has the following method
+<katsu>	void Log(string message);
+<katsu>	and the implementation for ConsoleLogger is
+<katsu>	{
+<katsu>	    Console.WriteLine(message);
+<katsu>	}
+<katsu>	done
+<katsu>	Now your Network object is "logging" elements, but it doesn't care to where
+<katsu>	it just happens that ConsoleLogger is outputting to the console window
+<ZeroOne>	So I'd create an instance of ConsoleLogger, then pass it to Network?
+<katsu>	yeah
+<katsu>	so the startup changes slightly
+<katsu>	var logger = new ConsoleLogger();
+<katsu>	var cts = CancellationToken();
+<ZeroOne>	In which case, my ConsoleUI class is now useless
+<katsu>	var network = new Network("", cts.Token, logger);
+<katsu>	var zrnBot = new ZrnBot(network, logger, new MessageFactory());
+<katsu>	and so on
+<katsu>	Well, what does ConsoleUI do?
+<ZeroOne>	https//github.com/Zero-One/ZrnBot/blob/master/ZrnBot/ConsoleUI.cs
+<OMGbot>	Title ZrnBot/ConsoleUI.cs at master · Zero-One/ZrnBot · GitHub (at https//github.com)
+<ZeroOne>	oh, that's outdated
+<katsu>	Ok, so you can also do input via console
+ *	fredpmpg (~fredpmpg@---.dhcp.leds.al.charter.com) has joined #sr
+<katsu>	this gets more complex
+<ZeroOne>	No
+<katsu>	and your ConsoleLogger becomes more modelly
+<ZeroOne>	Console isn't accepting input
+<ZeroOne>	http//pastebin.com/Tuuvxj
+<OMGbot>	Title [C#] using System; namespace ZrnBot { class ConsoleUI { public - Pastebin.com (at http//pastebin.com)
+<katsu>	So then what is GetInput? p
+<ZeroOne>	hang on, i've gone braindead
+<ZeroOne>	Oh, yes
+<ZeroOne>	Yeah, it accepts input for the initial bot setup
+<katsu>	ok, so that should just be part of the initialization phase
+<katsu>	nothing to do with ZrnBot
+<ZeroOne>	I should probably actually push this all to GitHub so you can see what's going on
+<ZeroOne>	Ok, repository is updated
+<ZeroOne>	So Program creates an instance of the UI and calls ui.Run
+<ZeroOne>	That creates a new bot and call its Load method
+<ZeroOne>	If it can find a config, it'll load it. Else, it'll do the setup
+<ZeroOne>	And the setup calls the static methods in ConsoleUI to make it look nice and pretty and formatted.
+<ZeroOne>	Which was my idea of separating the formatting logic from the business logic, until I went and made the ConsoleUI initialise the bot.
+<katsu>	Ok, so InputUtils
+<katsu>	all of that setup
+<katsu>	get that out of the bot
+<katsu>	does not belong there
+<ZeroOne>	That entire class?
+<katsu>	Bot shouldn't be calling anything from InputUtils
+<ZeroOne>	Oh
+<katsu>	and InputUtils itself is a bit worrying 
+<katsu>	Not terrible though
+<katsu>	it's decent encapsulation for the various operations you want to perform
+<ZeroOne>	So where did I go wrong?
+<katsu>	It's the public static nature of that
+<katsu>	Those methods should be private on some Startup class
+<ZeroOne>	Ah
+<ZeroOne>	I'm stuck in the mindset that only objects should be classes.
+<ZeroOne>	if that makes sense
+<katsu>	Yeah, think of classes simply as responsibilities, not objects
+<ZeroOne>	Ah
+<ZeroOne>	That makes sense
+<ZeroOne>	I need a class responsible for the startup
+<katsu>	You have no idea how long it takes for some to pick that up
+<katsu>	OOP can really screw with the developer's mindset if that's all they know
+<ZeroOne>	Sounds like it should be more responsibility-oriented programming
+<katsu>	haha
+<katsu>	Well, object is the "correct" term for it
+<katsu>	but object carries real-world connotations
+<ZeroOne>	So if Bot.Load() can't find a config, it should create an instance of the Startup class and then that'll essentially be the merging of InputUtils and BotSetup
+<katsu>	Yeah, sorta
+<katsu>	So the bot shouldn't load and save its own configs
+<ZeroOne>	I should have a Serialization class to handle that?
+<katsu>	There should be a class responsible for reading and writing that
+<ZeroOne>	ta-daa
+<katsu>	the Startup class would use this to load the bot config, if not found then prompting for bot info
+<katsu>	then generates a Bot from that
+<katsu>	Essentially, your "mess" is in the Startup class
+<katsu>	it is tightly coupled to nearly everything in your program
+<katsu>	but the Startup code is very small
+<katsu>	so it's not a lot of tightly coupled code to maintain
+<katsu>	and in fact, you may not need a separate class for config read/write
+<katsu>	or if you do, it'll be very thin
+<katsu>	just a wrapper around the existing .NET serialization
+<katsu>	It knows about the format of the config file
+<katsu>	and you're basically done
+<ZeroOne>	So would all of the "var cts = new CancellationToken();" stuff go into this Startup class, or is the Startup class just for the bot?
+<katsu>	the Startup class is the one that actually points out what file the config reader/writer should look at
+<katsu>	put that in Startup
+<katsu>	Once you've got it up and working, we can look at splitting that up
+<ZeroOne>	So the Program class is essentially doing var Startup = new Startup();
+<katsu>	yeah, pretty much
+<ZeroOne>	And then everything kicks off from there
+<katsu>	We'll look at splitting it up from there
+<ZeroOne>	Right
+<ZeroOne>	That doesn't sound terribly difficult to refactor. I might do it now
+<katsu>	Startup is a messy thing
+<ZeroOne>	He says, wanting to go to bed about an hour ago P
+<katsu>	heh
+<katsu>	I shouldn't be busy tomorrow, can probably help out
+<ZeroOne>	Does it matter if I put all the "var cts..." in the constructor if it's just going to be refactored later? Just as a temporary thing?
+<katsu>	The Network constructor needs the cts
+<ZeroOne>	I don't have the Network object written yet P
+<ZeroOne>	I'm basically refactoring what already exists
+<katsu>	https//msdn.microsoft.com/en-us/library/dd(v=vs.).aspx
+<katsu>	ah, ok
+<katsu>	no need for it yet then
+<ZeroOne>	I think my plan is to decouple the UI from the initialisation, which is what I'm doing, then get the Network class working, then start on that factory pattern for the messages
+<ZeroOne>	I keep forgetting to close my filestreams
+<Silver_Skree>	my brother taught me something good
+<Silver_Skree>	any time you write new, go ahead and write its delete as well
+<Silver_Skree>	then just move it
+<Silver_Skree>	but never get rid of it
+<Silver_Skree>	the same idea can be applied to opening and closing stuff
+<ZeroOne>	Not a bad idea
+<ZeroOne>	Same as pushing and pulling from registers
+<katsu>	See, in C++ I try to follow the RAII principle
+<katsu>	There is a similar concept in C# with IDisposable objects
+<katsu>	Which FileStreams are
+<katsu>	using (var file = new FileStream(new File("file")))
+<katsu>	{
+<katsu>	    file.Write Junk here;
+<ZeroOne>	Oh, of course
+<katsu>	}
+<katsu>	done
+<katsu>	C++ has stack-based object destruction that you can utilize
+<Silver_Skree>	anyway, speaking of my brother
+<Silver_Skree>	DFPercush_ how's Lucia's route going?
+<katsu>	and smart pointers in C++ can give you deterministic reference counting that will call the destructor when count hits zero
+<ZeroOne>	Ok, refactored
+<ZeroOne>	InputUtils now no longer exists
+<ZeroOne>	The Bot class isn't in charge of saving, loading or setup
+<ZeroOne>	There is a BotSerialiser class that deals with saving and loading
+<ZeroOne>	And the Startup class does the bot setup if a FileNotFound exception is thrown on trying to load the bot.
+<katsu>	Ok, I'm out for the rest of the day
+<katsu>	congrats on the refactoring
+<ZeroOne>	Yeah, I think I'm done too P
+...
+<ZeroOne> Should the connection accept a Uri or two strings and form the Uri itself? Or does it not really matter?
+<MenTaLguY> make it a Uri
+<MenTaLguY> that way your connection thinger doesn't have to deal with the case where the input isn't a well-formed URI
+<MenTaLguY> on the other hand, you might actually want to go further, and have a class that wraps a URI, which you can instantiate only if it's a *well-formed* IRC URI
+<MenTaLguY> versus an http// URI or something
+<ZrnBot> System.UriFormatException Invalid URI The hostname could not be parsed.
+<OMGbot> It's Sunday! Time to post a new Song of the Week!
+<ZeroOne> I think I'll go option 
+<ZeroOne> If you can't form a proper IRC URI, what are you doing with my bot
+<MenTaLguY> making a typo that anyone could make
+<ZeroOne> ...
+<ZeroOne> ok yeah maybe that could happen
+<MenTaLguY> an under-appreciated feature of static type systems is that you can take any assertion you like, check it in a class's constructor, and then that class embodies that assertion at the type level and you don't have to re-check it at runtime, wherever you're using an instance of that class
+<ZeroOne> I'll have to consider when to actually check for that
+<MenTaLguY> I'd suggest having an IRCUri class (wraps a Uri internally?), and use that everywhere
+<MenTaLguY> that way the only place you have to check is in IRCUri's constructor
+<ZeroOne> That does sound good. Imma write that down

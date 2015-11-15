@@ -47,10 +47,14 @@
     <Compile Include="Channel.cs" />
     <Compile Include="ConsoleUI.cs" />
     <Compile Include="IMessage.cs" />
+    <Compile Include="IO\Connection.cs" />
+    <Compile Include="IO\IConnection.cs" />
     <Compile Include="IO\IIrcMessage.cs" />
+    <Compile Include="IMessageFactory.cs" />
     <Compile Include="IO\INetwork.cs" />
     <Compile Include="IO\IrcMessage.cs" />
     <Compile Include="IO\IrcNetwork.cs" />
+    <Compile Include="MessageFactory.cs" />
     <Compile Include="IO\MessageReceivedEventArgs.cs" />
     <Compile Include="IPyScript.cs" />
     <Compile Include="Message.cs" />
@@ -61,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

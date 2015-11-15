@@ -1,6 +1,10 @@
-﻿namespace ZrnBot
+﻿using ZrnBot.IO;
+
+namespace ZrnBot
 {
-    class Program
+    internal delegate void MessageReceivedHandler(object sender, MessageReceivedEventArgs e);
+
+    static class Program
     {
         static void Main(string[] args)
         {

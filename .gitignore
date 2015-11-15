@@ -44,4 +44,5 @@ Temporary Items
 
 # Untracked Directories:
 /Test/*
-/packages/Moq.4.2.1502.0911/
+ZrnBot/packages/Moq.4.2.1502.0911/*
+Diagram.psd
