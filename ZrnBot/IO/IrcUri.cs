@@ -2,6 +2,7 @@
 
 namespace ZrnBot.IO
 {
+    [Serializable]
     class IrcUri
     {
         public Uri NetworkUri { get; }
@@ -19,7 +20,7 @@ namespace ZrnBot.IO
             }
             catch (UriFormatException e)
             {
-                throw;
+                throw e;
             }
         }
     }

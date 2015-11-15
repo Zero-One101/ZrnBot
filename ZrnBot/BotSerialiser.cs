@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace ZrnBot
 {
@@ -15,17 +16,26 @@ namespace ZrnBot
             }
 
             var inFile = new FileStream(AppData.ConfigFileName, FileMode.Open, FileAccess.Read);
-            var binFormatter = new BinaryFormatter();
-            var bot = (Bot) binFormatter.Deserialize(inFile);
-            inFile.Close();
-            return bot;
+
+            try
+            {
+                var binFormatter = new BinaryFormatter();
+                var bot = (Bot) binFormatter.Deserialize(inFile);
+                inFile.Close();
+                return bot;
+            }
+            catch (SerializationException)
+            {
+                inFile.Close();
+                throw;
+            }
         }
 
         public bool SaveBot(Bot bot)
         {
+            var outFile = new FileStream(AppData.ConfigFileName, FileMode.Create, FileAccess.Write);
             try
             {
-                var outFile = new FileStream(AppData.ConfigFileName, FileMode.Create, FileAccess.Write);
                 var binFormatter = new BinaryFormatter();
                 binFormatter.Serialize(outFile, bot);
                 outFile.Close();
@@ -34,6 +44,7 @@ namespace ZrnBot
             catch (Exception)
             {
                 // TODO: Do this properly, you lazy bastard
+                outFile.Close();
                 return false;
             }
         }

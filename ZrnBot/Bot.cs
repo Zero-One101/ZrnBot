@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZrnBot.IO;
 
 namespace ZrnBot
 {
@@ -11,8 +12,7 @@ namespace ZrnBot
     {
         public string BotName { get; private set; }
         public string Password { get; private set; }
-        public string Server { get; private set; }
-        public int Port { get; private set; }
+        public IrcUri IrcServerUri { get; private set; }
         private readonly List<Channel> channels;
         public string User { get; private set; }
         public char Control { get; private set; }
@@ -23,24 +23,23 @@ namespace ZrnBot
             get { return channels.AsReadOnly(); }
         }
 
-        public Bot(string botName, string password, string server, int port, string user, char control, string welcome, List<Channel> chanList)
+        public Bot(string botName, string password, IrcUri ircServerUri, string user, char control, string welcome, List<Channel> chanList)
         {
             Welcome = welcome;
             Control = control;
             User = user;
-            Port = port;
-            Server = server;
             Password = password;
             BotName = botName;
             channels = chanList;
+            IrcServerUri = ircServerUri;
         }
 
         public void DisplayConfig()
         {
             Console.WriteLine(BotName);
             Console.WriteLine(Password);
-            Console.WriteLine(Server);
-            Console.WriteLine(Port);
+            Console.WriteLine(IrcServerUri.NetworkUri.Host);
+            Console.WriteLine(IrcServerUri.NetworkUri.Port);
             Console.WriteLine(User);
             Console.WriteLine(Control);
         }

@@ -791,3 +791,23 @@
 <MenTaLguY> I'd suggest having an IRCUri class (wraps a Uri internally?), and use that everywhere
 <MenTaLguY> that way the only place you have to check is in IRCUri's constructor
 <ZeroOne> That does sound good. Imma write that down
+<ZeroOne> Ok, so now IrcNetwork creates a Connection that accepts a Uri and a CancellationToken
+<ZeroOne> Now I need to sort out the whole ReadAsync thing
+<ZeroOne> But, the question is, do I do it now, or do I get some sleep
+<katsu> IrcNetwork shouldn't create a Connection, it should be passed a Connection
+<katsu> and Connection shouldn't take a CancellationToken in the constructor, because you want that to be passed in from whatever allows you to cancel your bot
+<katsu> so
+<katsu> Controller -> Bot -> IrcNetwork -> Connection
+<MenTaLguY> well, you do have to consider what it's supposed to do when it loses the connection
+<MenTaLguY> probably you want it to re-establish
+<MenTaLguY> but it also seems out of the scope of responsibility for IrcNetwork per se
+<MenTaLguY> perhaps an object/class which can supply new connections
+<MenTaLguY> and you give that to the bot
+<ZeroOne> Ok, so have my bot class create the cancellation token, and the Connection, then have my bot create a new IrcNetwork, passing it that connection
+<ZeroOne> And then I take it the IrcNetwork holds a reference to the token?
+<katsu> You probably have whatever is creating the bot create the CancellationToken
+<ZeroOne> Which, in my case, is my Startup
+<katsu> Whatever level handles user input to actually be able to send a signal to stop the bot
+<katsu> that's the level that should be creating the CancellationToken
+<ZeroOne> I haven't even thought about how to get input from the console to the bot
+<ZeroOne> Ok, yep, it'll be Startup. At least for now

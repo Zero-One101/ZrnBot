@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using ZrnBot.IO;
 
 namespace ZrnBot
 {
@@ -19,27 +21,58 @@ namespace ZrnBot
             }
             catch (FileNotFoundException)
             {
-                var botName = GetName();
-                var password = GetPassword();
-                var server = GetServer();
-                var port = GetPort();
-                var channels = GetChannels();
-                var user = GetUser();
-                var control = GetControlChar();
+                Console.WriteLine("Couldn't find existing config. Creating new one...");
+                bot = GetBotData(botSerialiser);
+            }
+            catch (SerializationException e)
+            {
+                File.Delete(AppData.ConfigFileName);
+                Console.WriteLine("Couldn't load existing config: " + e.Message);
+                Console.WriteLine("Creating new one...");
+                bot = GetBotData(botSerialiser);
+            }
+        }
 
-                bot = new Bot(botName, password, server, port, user, control, "", channels);
+        private Bot GetBotData(BotSerialiser botSerialiser)
+        {
+            Bot bot;
+            var botName = GetName();
+            var password = GetPassword();
+            var ircUri = GetIrcUri();
+            var channels = GetChannels();
+            var user = GetUser();
+            var control = GetControlChar();
 
-                if (botSerialiser.SaveBot(bot))
+            bot = new Bot(botName, password, ircUri, user, control, "", channels);
+
+            if (botSerialiser.SaveBot(bot))
+            {
+                Console.WriteLine("Bot saved successfully.");
+            }
+            else
+            {
+                ConsoleUI.DisplayErrorMessage("Unable to save bot config!");
+            }
+
+            return bot;
+        }
+
+        private IrcUri GetIrcUri()
+        {
+            while (true)
+            {
+                try
                 {
-                    Console.WriteLine("Bot saved successfully.");
+                    var ircUri = new IrcUri(GetServer(), GetPort());
+                    return ircUri;
                 }
-                else
+                catch (UriFormatException e)
                 {
-                    ConsoleUI.DisplayErrorMessage("Unable to save bot config!");
+                    ConsoleUI.DisplayErrorMessage(string.Format("Invalid IRC URI: {0}", e.Message));
                 }
             }
         }
-        
+
         private string GetName()
         {
             while (true)
