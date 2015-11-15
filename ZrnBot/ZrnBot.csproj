@@ -54,6 +54,7 @@
     <Compile Include="IO\INetwork.cs" />
     <Compile Include="IO\IrcMessage.cs" />
     <Compile Include="IO\IrcNetwork.cs" />
+    <Compile Include="IO\IrcUri.cs" />
     <Compile Include="MessageFactory.cs" />
     <Compile Include="IO\MessageReceivedEventArgs.cs" />
     <Compile Include="IPyScript.cs" />
