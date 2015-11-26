@@ -35,7 +35,6 @@ namespace ZrnBot
 
         private Bot GetBotData(BotSerialiser botSerialiser)
         {
-            Bot bot;
             var botName = GetName();
             var password = GetPassword();
             var ircUri = GetIrcUri();
@@ -43,7 +42,7 @@ namespace ZrnBot
             var user = GetUser();
             var control = GetControlChar();
 
-            bot = new Bot(botName, password, ircUri, user, control, "", channels);
+            var bot = new Bot(botName, password, ircUri, user, control, "", channels);
 
             if (botSerialiser.SaveBot(bot))
             {
